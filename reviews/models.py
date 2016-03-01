@@ -6,17 +6,19 @@ from django.db import models
 
 class Hire(models.Model):
     employer_name = models.CharField(max_length=128)
-    employer_addr = models.CharField(max_length=128)
-    employer_city = models.CharField(max_length=64)
-    employer_state = models.CharField(max_length=64)
     wage_rate = models.FloatField() 
-    wage_unit_of_pay = models.CharField(max_length=64)
-    work_city = models.CharField(max_length=64)
-    work_state = models.CharField(max_length=64)
-    job_title = models.CharField(max_length=128)
+    wage_unit_of_pay = models.CharField(max_length=64,null=True)
+    job_title = models.CharField(max_length=128,null=True)
     start_date = models.DateField()
-    disclosure_file = models.CharField(max_length=128)
-    oflc_program_name = models.CharField(max_length=64)
-    fiscal_year = models.IntegerField()
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class Review(models.Model):
+    hire = models.ForeignKey(Hire)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=100)
+    comment = models.CharField(max_length=400)
 
 

@@ -20,3 +20,4 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
 ]
+
