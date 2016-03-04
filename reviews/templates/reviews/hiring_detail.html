@@ -1,37 +1,52 @@
 {% extends "reviews/base.html" %}
 {% load humanize %}
+{% load bootstrap3 %}
 
-<h1>{% block title %}{{ hire.job_title }}{% endblock %}</h1>
 
 {% block content %}
-    <table class="table">
-        <tr>
-            <td>Employer Name</td>
-            <td>{{ hire.employer_name }}</td>
-        </tr>
-        <tr>
-            <td>Wage Rate</td>
-            <td>{{ hire.wage_rate|floatformat:"0"|intcomma }} per {{ hire.wage_unit_of_pay }}</td>
-        </tr>
-        <tr>
-            <td>Employment Start Date</td>
-            <td>{{ hire.start_date }}</td>
-        </tr>
-    </table>
+    <div class="container contentContainer">
+        <h1>{% block title %}{{ hire.job_title }}{% endblock %}</h1>
 
+        <table class="table">
+            <tr>
+                <td>Employer Name</td>
+                <td>{{ hire.employer_name }}</td>
+            </tr>
+            <tr>
+                <td>Wage Rate</td>
+                <td>{{ hire.wage_rate|floatformat:"0"|intcomma }} per {{ hire.wage_unit_of_pay }}</td>
+            </tr>
+            <tr>
+                <td>Employment Start Date</td>
+                <td>{{ hire.start_date }}</td>
+            </tr>
+        </table>
 
-    <h3>Recent reviews</h3>
-    {% if review_list %}
-        <div class="row">
-            {% for review in review_list %}
-                <div class="col-xs-6 col-lg-4">
-                    <h6>By {{ review.user_name }} on {{review.pub_date}} </h6>
-                    <em>{{ review.comment }}</em>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No review for this hiring yet</p>
-    {% endif %}
+        <h3>Recent reviews</h3>
+        {% if review_list %}
+            <div class="row">
+                {% for review in review_list %}
+                    <div class="col-lg-12" style="border-top: 1px solid grey">
+                        <h6>By {{ review.user_name }} on {{review.pub_date}} </h6>
+                        <em>{{ review.comment }}</em>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No review for this hiring yet</p>
+        {% endif %}
+
+        <h3>Add your review</h3>
+
+        <form action="{% url 'reviews:add_review' hire.id %}" method="post" class="form">
+            {% csrf_token %}
+            {% bootstrap_form form layout='inline'%}
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "star" %} Add
+            </button>
+            {% endbuttons %}
+        </form>
+    </div>
 
 {% endblock %}
