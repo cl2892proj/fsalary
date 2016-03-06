@@ -1,11 +1,10 @@
 {% extends "reviews/base.html" %}
 {% load humanize %}
-{% load bootstrap3 %}
 
 
 {% block content %}
     <div class="container contentContainer">
-        <h1>{% block title %}{{ hire.job_title }}{% endblock %}</h1>
+        <h1>{{ hire.job_title }}</h1>
 
         <table class="table">
             <tr>
@@ -40,12 +39,14 @@
 
         <form action="{% url 'reviews:add_review' hire.id %}" method="post" class="form">
             {% csrf_token %}
-            {% bootstrap_form form layout='inline'%}
-            {% buttons %}
-            <button type="submit" class="btn btn-primary">
-                {% bootstrap_icon "star" %} Add
-            </button>
-            {% endbuttons %}
+             <div class="form-group">
+                {{ form.comment }}
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    Submit
+                </button>
+            </div>
         </form>
     </div>
 
