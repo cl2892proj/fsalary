@@ -10,7 +10,7 @@ import datetime
 
 def index(request):
     context = {}
-    return render(request, 'reviews/base.html', context)
+    return render(request, 'reviews/index.html', context)
 
 
 def hiring_detail(request, hire_id):
