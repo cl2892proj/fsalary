@@ -4,22 +4,65 @@
 
 {% block content %}
     <div class="container contentContainer">
-        <h1>{{ hire.job_title }}</h1>
+        {% if source == 'perm' %}
+            <h3>{{ hire.job_title }}</h3>
+            <table class="table">
+                <tr>
+                    <td>Wage Rate</td>
+                    <td>{{ hire.wage|floatformat:"0"|intcomma }} per {{ hire.wage_unit }}</td>
+                </tr>
+                <tr>
+                    <td>Employment Start Date (circa)</td>
+                    <td>{{ hire.start_date }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Name</td>
+                    <td>{{ hire.employer_name }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Address1</td>
+                    <td>{{ hire.employer_address1 }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Address2</td>
+                    <td>{{ hire.employer_address2 }}</td>
+                </tr>
+                <tr>
+                    <td>Employer City</td>
+                    <td>{{ hire.employer_city }}</td>
+                </tr>
+                <tr>
+                    <td>Employer State</td>
+                    <td>{{ hire.employer_state }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Zipcode</td>
+                    <td>{{ hire.employer_zipcode }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Employee Headcount</td>
+                    <td>{{ hire.employer_num_employees }}</td>
+                </tr>
+                <tr>
+                    <td>Employer Year Established</td>
+                    <td>{{ hire.employer_yr_estab }}</td>
+                </tr>
+                <tr>
+                    <td>Employee Education Level</td>
+                    <td>{{ hire.education }}</td>
+                </tr>
+                <tr>
+                    <td>Employee Major of Study</td>
+                    <td>{{ hire.major }}</td>
+                </tr>
+                <tr>
+                    <td>Class of Admission</td>
+                    <td>{{ hire.class_of_admission }}</td>
+                </tr>
 
-        <table class="table">
-            <tr>
-                <td>Employer Name</td>
-                <td>{{ hire.employer_name }}</td>
-            </tr>
-            <tr>
-                <td>Wage Rate</td>
-                <td>{{ hire.wage_rate|floatformat:"0"|intcomma }} per {{ hire.wage_unit_of_pay }}</td>
-            </tr>
-            <tr>
-                <td>Employment Start Date</td>
-                <td>{{ hire.start_date }}</td>
-            </tr>
-        </table>
+            </table>
+        {% endif %}
+
 
         <h3>Recent reviews</h3>
         {% if review_list %}
@@ -37,7 +80,7 @@
 
         <h3>Add your review</h3>
 
-        <form action="{% url 'reviews:add_review' hire.id %}" method="post" class="form">
+        <form action="{% url 'reviews:add_review' year=hire.year case_number=hire.case_number %}" method="post" class="form">
             {% csrf_token %}
              <div class="form-group">
                 {{ form.comment }}

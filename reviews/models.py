@@ -3,32 +3,6 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
-
-
-class Hire(models.Model):
-    year = models.IntegerField()
-    employer_name = models.TextField()
-    employer_address1 = models.TextField()
-    employer_address2 = models.TextField()
-    employer_city = models.TextField()
-    employer_state = models.TextField()
-    employer_postal_code = models.TextField()
-    job_title = models.TextField()
-    wage = models.FloatField()
-    unit_of_pay = models.TextField()
-    source = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'reviews_hire'
-
-class Review(models.Model):
-    hire = models.ForeignKey(Hire)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=100)
-    comment = models.CharField(max_length=400)
-
-
 class OflcH1B(models.Model):
     year = models.IntegerField()
     case_no = models.TextField()
@@ -63,27 +37,47 @@ class OflcH1B(models.Model):
     pw_2 = models.FloatField()
     pw_unit_2 = models.TextField()
 
+    class Meta:
+        unique_together = ('year', 'case_no')
+
+class OflcH1B_Review(models.Model):
+    h1b = models.ForeignKey(OflcH1B)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+
 class OflcPerm(models.Model):
     year = models.IntegerField()
     case_number = models.TextField()
-    decision_date = models.DateField()
-    case_status = models.TextField()
-    case_received_date = models.DateField()
-    employer_name = models.TextField()
-    employer_address_1 = models.TextField()
-    employer_address_2 = models.TextField()
-    employer_city = models.TextField()
-    employer_state = models.TextField()
-    employer_country = models.TextField()
-    employer_postal_code = models.TextField()
-    employer_num_employees = models.FloatField()
-    employer_yr_estab = models.FloatField()
-    pw_amount_9089 = models.FloatField()
-    pw_unit_of_pay_9089 = models.TextField()
-    wage_offer_from_9089 = models.FloatField()
-    wage_offer_to_9089 = models.FloatField()
-    wage_offer_unit_of_pay_9089 = models.TextField()
-    job_info_job_title = models.TextField()
-    job_info_education = models.TextField()
-    job_info_major = models.TextField()
-    class_of_admission = models.TextField()
+    decision_date = models.DateField(null=True)
+    case_status = models.TextField(null=True)
+    case_received_date = models.DateField(null=True)
+    employer_name = models.TextField(null=True)
+    employer_address_1 = models.TextField(null=True)
+    employer_address_2 = models.TextField(null=True)
+    employer_city = models.TextField(null=True)
+    employer_state = models.TextField(null=True)
+    employer_country = models.TextField(null=True)
+    employer_postal_code = models.TextField(null=True)
+    employer_num_employees = models.FloatField(null=True)
+    employer_yr_estab = models.FloatField(null=True)
+    pw_amount_9089 = models.FloatField(null=True)
+    pw_unit_of_pay_9089 = models.TextField(null=True)
+    wage_offer_from_9089 = models.FloatField(null=True)
+    wage_offer_to_9089 = models.FloatField(null=True)
+    wage_offer_unit_of_pay_9089 = models.TextField(null=True)
+    job_info_job_title = models.TextField(null=True)
+    job_info_education = models.TextField(null=True)
+    job_info_major = models.TextField(null=True)
+    class_of_admission = models.TextField(null=True)
+
+    class Meta:
+        unique_together = ('year', 'case_number', 'case_status')
+    
+    
+class OflcPerm_Review(models.Model):
+    perm = models.ForeignKey(OflcPerm)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+

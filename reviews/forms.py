@@ -1,9 +1,9 @@
 from django.forms import ModelForm, Textarea
-from reviews.models import Review
+from reviews.models import OflcPerm_Review 
 
 class ReviewForm(ModelForm):
     class Meta:
-        model = Review
+        model = OflcPerm_Review 
         fields = ['comment',]
         widgets = {
             'comment': Textarea(attrs={ 'cols':40, 
