@@ -12,7 +12,43 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+# BEGIN handle the unicode problem
+import sys
+defaultencoding = 'utf-8'
+if sys.getdefaultencoding() != defaultencoding:
+    reload(sys)
+    sys.setdefaultencoding(defaultencoding)
+# END handle the unicode problem
+
 from private_settings import *
+import elasticsearch
+from requests_aws4auth import AWS4Auth
+
+#Haystack Settings
+#HAYSTACK_CONNECTIONS = {
+#    'default': {
+#        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#        'URL': 'http://127.0.0.1:9200/',
+#        'INDEX_NAME': 'haystack',
+#    },
+#}
+
+awsauth = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': AWS_ES_FSALARY_ENDPOINT,
+        'INDEX_NAME': 'haystack',
+        'KWARGS':{
+            'port':443,
+            'http_auth':awsauth,
+            'use_ssl':True,
+            'verify_certs':True,
+            'connection_class':elasticsearch.RequestsHttpConnection,
+        },
+    },
+}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +77,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'reviews',
+    'haystack',
+    'elasticsearch',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -59,7 +97,7 @@ ROOT_URLCONF = 'fsalary.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR+'/fsalary/templates/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

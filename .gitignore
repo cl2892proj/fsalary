@@ -1,3 +1,4 @@
 *.pyc
 fsalary/private_settings.py
 ./reviews/migrations/*
+*.swp
