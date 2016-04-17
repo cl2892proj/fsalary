@@ -7,6 +7,12 @@ from django.core.urlresolvers import reverse
 from .models import OflcPerm, OflcPerm_Review
 from .forms import ReviewForm
 import datetime
+import pdb
+
+#haystack begin
+
+from haystack.generic_views import FacetedSearchView
+#haystack end
 
 WAGE_UNIT_MAP = {
                     'hr':'hour',
@@ -23,8 +29,9 @@ WAGE_UNIT_MAP = {
                 }
 
 def index(request):
-    context = {}
-    return render(request, 'reviews/index.html', context)
+    pass
+    #context = {'form':}
+    #return render(request, 'reviews/index.html', context)
 
 def wage_unit_std(unit):
     """used to standardize unit text for wage"""
@@ -85,5 +92,7 @@ def add_review(request, year, case_number):
     return render(request, 'reviews/hiring_detail.html',context)
         
 
-
+class MyFacetedSearchView(FacetedSearchView):
+    #pdb.set_trace()
+    facet_fields = ['employer_name','employer_address_1']
 

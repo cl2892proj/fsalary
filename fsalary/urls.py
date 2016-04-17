@@ -15,14 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-import reviews.views
+from reviews.views import MyFacetedSearchView, index
+
+
+#haystack begin
+#from haystack.forms import FacetedSearchForm
+#from haystack.views import FacetedSearchView
+#haystack end
 
 urlpatterns = [
-    url(r'^$', reviews.views.index),
+    url(r'^$', index),
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
 
     #haystack search
-    url(r'^search/',include('haystack.urls')),
+    #url(r'^search/',include('haystack.urls')),
+    url(r'^search/', MyFacetedSearchView.as_view(), name="haystack_search"),
 ]
 
