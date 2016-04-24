@@ -25,13 +25,6 @@ import elasticsearch
 from requests_aws4auth import AWS4Auth
 
 #Haystack Settings
-#HAYSTACK_CONNECTIONS = {
-#    'default': {
-#        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-#        'URL': 'http://127.0.0.1:9200/',
-#        'INDEX_NAME': 'haystack',
-#    },
-#}
 
 awsauth = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
 
@@ -39,6 +32,7 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': AWS_ES_FSALARY_ENDPOINT,
+        'TIMEOUT': 60 * 5, #5 min
         'INDEX_NAME': 'haystack',
         'KWARGS':{
             'port':443,

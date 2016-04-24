@@ -32,17 +32,17 @@
             </dl>
         </div>
 
-        <h2>By employer_address_1</h2>
+        <h2>By employer_address1</h2>
         <div>
             <dl>
-                {% if facets.fields.employer_address_1 %}
-                    <dt>employer_address_1</dt>
-                    {# Provide only the top 5 employer_address_1s #}
-                    {% for employer_address_1 in facets.fields.employer_address_1|slice:":5" %}
-                        <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_address_1_exact:{{ employer_address_1.0|urlencode }}">{{ employer_address_1.0 }}</a> ({{ employer_address_1.1 }})</dd>
+                {% if facets.fields.employer_address1 %}
+                    <dt>employer_address1</dt>
+                    {# Provide only the top 5 employer_address1s #}
+                    {% for employer_address1 in facets.fields.employer_address1|slice:":5" %}
+                        <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_address1_exact:{{ employer_address1.0|urlencode }}">{{ employer_address1.0 }}</a> ({{ employer_address1.1 }})</dd>
                     {% endfor %}
                 {% else %}
-                    <p>No employer_address_1 facets.</p>
+                    <p>No employer_address1 facets.</p>
                 {% endif %}
             </dl>
         </div>
@@ -57,7 +57,7 @@
                         <a href="{{ result.object.get_absolute_url }}">{{ result.object.employer_name }}</a>
                     </td>
                     <td>
-                        <a href="{{ result.object.get_absolute_url }}">{{ result.object.employer_address_1}}</a>
+                        <a href="{{ result.object.get_absolute_url }}">{{ result.object.employer_address1}}</a>
                     </td>
                 </tr>
             {% empty %}

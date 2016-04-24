@@ -29,7 +29,6 @@ urlpatterns = [
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
 
     #haystack search
-    #url(r'^search/',include('haystack.urls')),
     url(r'^search/', MyFacetedSearchView.as_view(), name="haystack_search"),
 ]
 
