@@ -4,64 +4,62 @@
 
 {% block content %}
     <div class="container contentContainer">
-        {% if source == 'perm' %}
-            <h3>{{ hire.job_title }}</h3>
-            <table class="table">
-                <tr>
-                    <td>Wage Rate</td>
-                    <td>{{ hire.wage|floatformat:"0"|intcomma }} per {{ hire.wage_unit }}</td>
-                </tr>
-                <tr>
-                    <td>Employment Start Date (circa)</td>
-                    <td>{{ hire.start_date }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Name</td>
-                    <td>{{ hire.employer_name }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Address1</td>
-                    <td>{{ hire.employer_address1 }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Address2</td>
-                    <td>{{ hire.employer_address2 }}</td>
-                </tr>
-                <tr>
-                    <td>Employer City</td>
-                    <td>{{ hire.employer_city }}</td>
-                </tr>
-                <tr>
-                    <td>Employer State</td>
-                    <td>{{ hire.employer_state }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Zipcode</td>
-                    <td>{{ hire.employer_zipcode }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Employee Headcount</td>
-                    <td>{{ hire.employer_num_employees }}</td>
-                </tr>
-                <tr>
-                    <td>Employer Year Established</td>
-                    <td>{{ hire.employer_yr_estab }}</td>
-                </tr>
-                <tr>
-                    <td>Employee Education Level</td>
-                    <td>{{ hire.education }}</td>
-                </tr>
-                <tr>
-                    <td>Employee Major of Study</td>
-                    <td>{{ hire.major }}</td>
-                </tr>
-                <tr>
-                    <td>Class of Admission</td>
-                    <td>{{ hire.class_of_admission }}</td>
-                </tr>
+        <h3>{{ hire.job_title }}</h3>
+        <table class="table">
+            <tr>
+                <td>Wage Rate</td>
+                <td>{{ hire.wage|floatformat:"0"|intcomma }} per {{ hire.wage_unit }}</td>
+            </tr>
+            <tr>
+                <td>Employment Start Date (circa)</td>
+                <td>{{ hire.start_date }}</td>
+            </tr>
+            <tr>
+                <td>Employer Name</td>
+                <td>{{ hire.employer_name }}</td>
+            </tr>
+            <tr>
+                <td>Employer Address1</td>
+                <td>{{ hire.employer_address1 }}</td>
+            </tr>
+            <tr>
+                <td>Employer Address2</td>
+                <td>{{ hire.employer_address2 }}</td>
+            </tr>
+            <tr>
+                <td>Employer City</td>
+                <td>{{ hire.employer_city }}</td>
+            </tr>
+            <tr>
+                <td>Employer State</td>
+                <td>{{ hire.employer_state }}</td>
+            </tr>
+            <tr>
+                <td>Employer Zipcode</td>
+                <td>{{ hire.employer_zipcode }}</td>
+            </tr>
+            <tr>
+                <td>Employer Employee Headcount</td>
+                <td>{{ hire.employer_num_employees }}</td>
+            </tr>
+            <tr>
+                <td>Employer Year Established</td>
+                <td>{{ hire.employer_yr_estab }}</td>
+            </tr>
+            <tr>
+                <td>Employee Education Level</td>
+                <td>{{ hire.education }}</td>
+            </tr>
+            <tr>
+                <td>Employee Major of Study</td>
+                <td>{{ hire.major }}</td>
+            </tr>
+            <tr>
+                <td>Class of Admission</td>
+                <td>{{ hire.class_of_admission }}</td>
+            </tr>
 
-            </table>
-        {% endif %}
+        </table>
 
 
         <h3>Recent reviews</h3>

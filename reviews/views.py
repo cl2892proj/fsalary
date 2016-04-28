@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from .models import OflcPerm, OflcPerm_Review
+from .models import OflcPerm, OflcPerm_Review, OflcH1B, OflcH1B_Review
 from .forms import ReviewForm
 import datetime
 import pdb
@@ -46,8 +46,35 @@ def min_date(date_list):
     except:
         return None
 
-def hiring_detail(request, year, case_number):
-    perm = get_object_or_404(OflcPerm, year=year, case_number=case_number)
+def h1b_detail(request, year, case_no,case_status,prevailing_wage,wage_rate_of_pay_from):
+    h1b = get_object_or_404(OflcH1B, 
+                            year=year, 
+                            case_no=case_no,
+                            case_status=case_status,
+                            prevailing_wage= (None if prevailing_wage =='' else prevailing_wage),
+                            wage_rate_of_pay_from=(None if wage_rate_of_pay_from =='' else wage_rate_of_pay_from)
+                            )
+
+    hire = {
+                'year':h1b.year,
+                'case_number':h1b.case_no,
+                'job_title':h1b.job_title,
+                'start_date':h1b.employment_start_date or '',
+                'wage': h1b.wage_rate_of_pay_from or h1b.prevailing_wage,
+                'wage_unit': wage_unit_std(h1b.wage_unit_of_pay or h1b.pw_unit_of_pay), 
+                'employer_name':h1b.employer_name or '',
+                'employer_address1':h1b.employer_address1 or '',
+                'employer_address2':h1b.employer_address2 or '',
+                'employer_city':h1b.employer_city or '',
+                'employer_state':h1b.employer_state or '',
+                'employer_zipcode':str(h1b.employer_postal_code).zfill(5),
+            }
+    review_list = OflcH1B_Review.objects.filter(h1b = h1b)
+    context = {'source':'h1b', 'hire':hire, 'review_list':review_list, 'form':ReviewForm()}
+    return render(request, 'reviews/hiring_detail.html', context)
+
+def perm_detail(request, year, case_number, case_status):
+    perm = get_object_or_404(OflcPerm, year=year, case_number=case_number, case_status=case_status)
 
     hire = {
                 'year':perm.year,
@@ -57,11 +84,11 @@ def hiring_detail(request, year, case_number):
                 'wage': perm.pw_amount_9089 or perm.wage_offer_from_9089,
                 'wage_unit': wage_unit_std(perm.pw_unit_of_pay_9089 or perm.wage_offer_unit_of_pay_9089), 
                 'employer_name':perm.employer_name or '',
-                'employer_address1':perm.employer_address_1 or '',
-                'employer_address2':perm.employer_address_2 or '',
+                'employer_address1':perm.employer_address1 or '',
+                'employer_address2':perm.employer_address2 or '',
                 'employer_city':perm.employer_city or '',
                 'employer_state':perm.employer_state or '',
-                'employer_zipcode':perm.employer_postal_code or '',
+                'employer_zipcode':str(perm.employer_postal_code).zfill(5),
                 'employer_num_employees':perm.employer_num_employees or '',
                 'employer_yr_estab':perm.employer_yr_estab or '',
                 'education': perm.job_info_education or '',
