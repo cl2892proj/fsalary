@@ -86,7 +86,7 @@ class OflcPerm(models.Model):
     wage_offer_from_9089 = models.FloatField(null=True)
     wage_offer_to_9089 = models.FloatField(null=True)
     wage_offer_unit_of_pay_9089 = models.TextField(null=True)
-    job_info_job_title = models.TextField(null=True)
+    job_title = models.TextField(null=True)
     job_info_education = models.TextField(null=True)
     job_info_major = models.TextField(null=True)
     class_of_admission = models.TextField(null=True)

@@ -4,11 +4,17 @@ from .models import OflcPerm, OflcH1B
 
 class OflcPermIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    #author = indexes.CharField(model_attr='user')
-    employer_name = indexes.CharField(model_attr='employer_name', null=True, faceted=True) 
-    employer_address1 = indexes.CharField(model_attr='employer_address1', null=True, faceted=True ) 
-    #pub_date = indexes.DateTimeField(model_attr='pub_date')
-
+    year = indexes.IntegerField(model_attr='year',faceted=True,)
+    case_status = indexes.CharField(model_attr='case_status',faceted=True,null=True)
+    employer_name = indexes.CharField(model_attr='employer_name',faceted=True,null=True)
+    employer_address1 = indexes.CharField(model_attr='employer_address1',faceted=True,null=True)
+    employer_city = indexes.CharField(model_attr='employer_city',faceted=True,null=True)
+    employer_state = indexes.CharField(model_attr='employer_state',faceted=True,null=True)
+    employer_postal_code = indexes.CharField(model_attr='employer_postal_code',faceted=True,null=True)
+    job_title = indexes.CharField(model_attr='job_title',faceted=True,null=True)
+    job_info_education = indexes.CharField(model_attr='job_info_education',null=True)
+    job_info_major = indexes.CharField(model_attr='job_info_major',null=True)
+    class_of_admission = indexes.CharField(model_attr='class_of_admission',null=True)
     #auto complete
     #content_auto = indexes.EdgeNgramField(model_attr='employer_address_1')
 
@@ -21,10 +27,17 @@ class OflcPermIndex(indexes.SearchIndex, indexes.Indexable):
 
 class OflcH1BIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    #author = indexes.CharField(model_attr='user')
-    employer_name = indexes.CharField(model_attr='employer_name', null=True, faceted=True) 
-    employer_address1 = indexes.CharField(model_attr='employer_address1', null=True, faceted=True ) 
-    #pub_date = indexes.DateTimeField(model_attr='pub_date')
+    year = indexes.IntegerField(model_attr='year',faceted=True,)
+    case_status = indexes.CharField(model_attr='case_status',faceted=True,)
+    employer_name = indexes.CharField(model_attr='employer_name',faceted=True,null=True)
+    employer_address1 = indexes.CharField(model_attr='employer_address1',faceted=True,null=True)
+    employer_city = indexes.CharField(model_attr='employer_city',faceted=True,null=True)
+    employer_state = indexes.CharField(model_attr='employer_state',faceted=True,null=True)
+    employer_postal_code = indexes.CharField(model_attr='employer_postal_code',faceted=True,null=True)
+    job_title = indexes.CharField(model_attr='job_title',faceted=True,null=True)
+    worksite_city = indexes.CharField(model_attr='worksite_city',null=True)
+    worksite_state = indexes.CharField(model_attr='worksite_state',null=True)
+    worksite_postal_code = indexes.CharField(model_attr='worksite_postal_code',null=True)
 
     #auto complete
     #content_auto = indexes.EdgeNgramField(model_attr='employer_address_1')

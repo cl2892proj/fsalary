@@ -121,5 +121,15 @@ def add_review(request, year, case_number):
 
 class MyFacetedSearchView(FacetedSearchView):
     #pdb.set_trace()
-    facet_fields = ['employer_name','employer_address1']
+    facet_fields = [
+            'employer_name',
+            'employer_address1',
+            'employer_city',
+            'employer_state',
+            'employer_postal_code',
+            'job_title',
+            'case_status',
+            'year',
+        ]
+
 
