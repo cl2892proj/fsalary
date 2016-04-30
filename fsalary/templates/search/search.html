@@ -2,97 +2,134 @@
 {% load humanize %}
 
 {% block search_block %}
-    <h2>Search</h2>
 
-    <form method="get" action=".">
-        <table>
-            {{ form.as_table }}
-            <tr>
-                <td>&nbsp;</td>
-                <td>
-                    <input type="submit" value="Search">
-                </td>
-            </tr>
-        </table>
-    </form>
 
-    {% if query %}
-        <!-- Begin Faceting -->
-        <h2>By employer_name</h2>
-        <div>
-            <dl>
-                {% if facets.fields.employer_name %}
-                    <dt>employer_name</dt>
-                    {# Provide only the top 5 employer_names #}
-                    {% for employer_name in facets.fields.employer_name|slice:":5" %}
-                        <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_name_exact:{{ employer_name.0|urlencode }}">{{ employer_name.0 }}</a> ({{ employer_name.1 }})</dd>
-                    {% endfor %}
-                {% else %}
-                    <p>No employer_name facets.</p>
-                {% endif %}
-            </dl>
-        </div>
+    <div style="padding-left: 10px; padding-right: 10px;" class="container">
 
-        <h2>By employer_address1</h2>
-        <div>
-            <dl>
-                {% if facets.fields.employer_address1 %}
-                    <dt>employer_address1</dt>
-                    {# Provide only the top 5 employer_address1s #}
-                    {% for employer_address1 in facets.fields.employer_address1|slice:":5" %}
-                        <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_address1_exact:{{ employer_address1.0|urlencode }}">{{ employer_address1.0 }}</a> ({{ employer_address1.1 }})</dd>
-                    {% endfor %}
-                {% else %}
-                    <p>No employer_address1 facets.</p>
-                {% endif %}
-            </dl>
-        </div>
-        <!-- End Faceting --> 
+        <h2>Search</h2>
 
-        <h3>Results</h3>
-
-        <table class="table">
-            {% for result in object_list %}
+        <!-- start search form -->
+        <form method="get" action=".">
+            <table>
+                {{ form.as_table }}
                 <tr>
-                    <td>{{ result.object.year }}</td>
-                    <td>{{ result.object.job_title }}</td>
+                    <td>&nbsp;</td>
                     <td>
-                        {%if result.object.wage_rate_of_pay_from %}
-                            {{ result.object.wage_rate_of_pay_from|floatformat:"0"|intcomma }}  
-                        {% else %}
-                            {{ result.object.prevailing_wage|floatformat:"0"|intcomma  }} 
-                        {% endif %} /  
-                        {{ result.object.wage_unit_of_pay }} 
+                        <input type="submit" value="Search">
                     </td>
-                    <td>{{ result.object.employer_name }}</td>
-                    <td>
-                        {{ result.object.employer_address1}}
-                        {%if  result.object.employer_address2 %}
-                            {{ result.object.employer_address2}}
-                        {% endif %}
-                        ,<br>
-                        {{ result.object.employer_city}}, {{ result.object.employer_state}}
-                        {{ result.object.employer_postal_code}}
-                    </td>
-                    <td><a href="{{ result.object.get_absolute_url }}"><p>detail</p></a></td>
                 </tr>
-            {% empty %}
-                <p>No results found.</p>
-            {% endfor %}
+            </table>
+        </form>
+        <!--end search form-->
 
-            {% if page.has_previous or page.has_next %}
+        <!--start left panel-->
+        <div class="col-xs-12 col-sm-3">
+            {% if query %}
+                <!-- Begin Faceting -->
+                <h4>By employer_name</h4>
                 <div>
-                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                    |
-                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                    <dl>
+                        {% if facets.fields.employer_name %}
+                            <dt>employer_name</dt>
+                            {# Provide only the top 5 employer_names #}
+                            {% for employer_name in facets.fields.employer_name|slice:":5" %}
+                                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_name_exact:{{ employer_name.0|urlencode }}">{{ employer_name.0 }}</a> ({{ employer_name.1 }})</dd>
+                            {% endfor %}
+                        {% endif %}
+                    </dl>
                 </div>
-            {% else %}
-                <p>No Pagination</p>
+
+                <h4>By employer_address1</h4>
+                <div>
+                    <dl>
+                        {% if facets.fields.employer_address1 %}
+                            <dt>employer_address1</dt>
+                            {# Provide only the top 5 employer_address1s #}
+                            {% for employer_address1 in facets.fields.employer_address1|slice:":5" %}
+                                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_address1_exact:{{ employer_address1.0|urlencode }}">{{ employer_address1.0 }}</a> ({{ employer_address1.1 }})</dd>
+                            {% endfor %}
+                        {% endif %}
+                    </dl>
+                </div>
+                <!-- End Faceting --> 
             {% endif %}
+        </div>
+        <!--end left panel-->
 
-        </table>
+        <!--start main panel-->
+        <div class="col-xs-12 col-sm-9">
+            <div>
 
-    {% else %}
-        {# Show some example queries to run, maybe query syntax, something else? #}
-    {% endif %}
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Detail View</a></li>
+                    <li role="presentation"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graphic View</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!--detail pane start-->
+                    <div role="tabpanel" class="tab-pane active" id="detail">
+                        {% if query %}
+                            <h3>Results</h3>
+
+                            <table class="table">
+                                {% for result in object_list %}
+                                    <tr>
+                                        <td>{{ result.object.year }}</td>
+                                        <td>{{ result.object.job_title }}</td>
+                                        <td>
+                                            {%if result.object.wage_rate_of_pay_from %}
+                                                {{ result.object.wage_rate_of_pay_from|floatformat:"0"|intcomma }}  
+                                            {% else %}
+                                                {{ result.object.prevailing_wage|floatformat:"0"|intcomma  }} 
+                                            {% endif %} /  
+                                            {{ result.object.wage_unit_of_pay }} 
+                                        </td>
+                                        <td>{{ result.object.employer_name }}</td>
+                                        <td>
+                                            {{ result.object.employer_address1}}
+                                            {%if  result.object.employer_address2 %}
+                                                {{ result.object.employer_address2}}
+                                            {% endif %}
+                                            ,<br>
+                                            {{ result.object.employer_city}}, {{ result.object.employer_state}}
+                                            {{ result.object.employer_postal_code}}
+                                        </td>
+                                        <td><a href="{{ result.object.get_absolute_url }}"><p>view</p></a></td>
+                                    </tr>
+                                {% empty %}
+                                    <p>No results found.</p>
+                                {% endfor %}
+
+                                {% if page.has_previous or page.has_next %}
+                                    <div>
+                                        {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                                        |
+                                        {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                                    </div>
+                                {% else %}
+                                    <p>No Pagination</p>
+                                {% endif %}
+
+                            </table>
+
+                        {% else %}
+                            {# Show some example queries to run, maybe query syntax, something else? #}
+                        {% endif %}
+                    </div>
+                    <!--detail pane ends-->
+
+                    <div role="tabpanel" class="tab-pane" id="graph">
+                    
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <!--end main panel-->
+    </div>
 {% endblock %}
