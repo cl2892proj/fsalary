@@ -9,6 +9,11 @@ from .forms import ReviewForm
 import datetime
 import pdb
 
+
+#charting
+import random
+from django.shortcuts import render_to_response
+
 #haystack begin
 
 from haystack.generic_views import FacetedSearchView
@@ -79,7 +84,7 @@ def perm_detail(request, year, case_number, case_status):
     hire = {
                 'year':perm.year,
                 'case_number':perm.case_number,
-                'job_title':perm.job_info_job_title,
+                'job_title':perm.job_title,
                 'start_date':min_date([perm.decision_date, perm.case_received_date]) or '',
                 'wage': perm.pw_amount_9089 or perm.wage_offer_from_9089,
                 'wage_unit': wage_unit_std(perm.pw_unit_of_pay_9089 or perm.wage_offer_unit_of_pay_9089), 
@@ -132,4 +137,79 @@ class MyFacetedSearchView(FacetedSearchView):
             'year',
         ]
 
+    def get_context_data(self, **kwargs):
+        context = super(FacetedSearchView, self).get_context_data(**kwargs)
 
+        """
+        scatterchart page
+        """
+        xdata = [i + random.randint(1, 10) for i in range(50)]
+        ydata1 = [i * random.randint(1, 10) for i in range(50)]
+        #xdata = [result.object.year for result in object_list]
+        #ydata1 = [result.object.prevailing_wage for result in object_list]
+        #ydata1 = [i * random.randint(1, 10) for i in range(nb_element)]
+        #ydata2 = map(lambda x: x * 2, ydata1)
+        #ydata3 = map(lambda x: x * 5, ydata1)
+
+        kwargs1 = {'shape': 'circle'}
+        #kwargs2 = {'shape': 'cross'}
+        #kwargs3 = {'shape': 'triangle-up'}
+
+        extra_serie1 = {"tooltip": {"y_start": "", "y_end": " balls"}}
+
+        chartdata = {
+            'x': xdata,
+            'name1': 'series 1', 'y1': ydata1, 'kwargs1': kwargs1, 'extra1': extra_serie1,
+            #'name2': 'series 2', 'y2': ydata2, 'kwargs2': kwargs2, 'extra2': extra_serie1,
+            #'name3': 'series 3', 'y3': ydata3, 'kwargs3': kwargs3, 'extra3': extra_serie1
+        }
+
+        charttype = "scatterChart"
+        chartcontainer = 'scatterchart_container'  # container name
+        context['charttype'] = charttype 
+        context['chartdata'] = chartdata 
+        context['chartcontainer'] = chartcontainer
+        context['d3_extra'] =  {
+                'x_is_date': True,
+                'x_axis_format': '%d-%b',
+                'tag_script_js': True,
+                'jquery_on_ready': True,
+            }
+        
+        return context
+
+       # """
+       # scatterchart page
+       # """
+       # nb_element = 50
+       # xdata = [i + random.randint(1, 10) for i in range(nb_element)]
+       # ydata1 = [i * random.randint(1, 10) for i in range(nb_element)]
+       # ydata2 = map(lambda x: x * 2, ydata1)
+       # ydata3 = map(lambda x: x * 5, ydata1)
+
+       # kwargs1 = {'shape': 'circle'}
+       # kwargs2 = {'shape': 'cross'}
+       # kwargs3 = {'shape': 'triangle-up'}
+
+       # extra_serie1 = {"tooltip": {"y_start": "", "y_end": " balls"}}
+
+       # chartdata = {
+       #     'x': xdata,
+       #     'name1': 'series 1', 'y1': ydata1, 'kwargs1': kwargs1, 'extra1': extra_serie1,
+       #     'name2': 'series 2', 'y2': ydata2, 'kwargs2': kwargs2, 'extra2': extra_serie1,
+       #     'name3': 'series 3', 'y3': ydata3, 'kwargs3': kwargs3, 'extra3': extra_serie1
+       # }
+
+       # charttype = "scatterChart"
+       # chartcontainer = 'scatterchart_container'  # container name
+       # context['charttype'] = charttype 
+       # context['chartdata'] = chartdata 
+       # context['chartcontainer'] = chartcontainer
+       # context['d3_extra'] =  {
+       #         'x_is_date': True,
+       #         'x_axis_format': '%d-%b',
+       #         'tag_script_js': True,
+       #         'jquery_on_ready': True,
+       #     }
+       # 
+       # return context

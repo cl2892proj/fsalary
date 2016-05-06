@@ -16,4 +16,5 @@ urlpatterns = [
     #url(r'^hiring_detail/(?P<hire_id>[0-9]+)/add_review/$', views.add_review, name='add_review'),
 
     url(r'^hiring_detail/data_perm/(?P<year>[0-9]{4})/(?P<case_number>[a-zA-Z0-9-]+)/add_review/$', views.add_review, name='add_review'),
+
 ]

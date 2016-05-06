@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     'reviews',
     'haystack',
     'elasticsearch',
+    'django_nvd3',
+    'djangobower',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -158,3 +160,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# Django-bower
+# ------------
+STATICFILES_FINDERS = (
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_PATH = '/usr/local/bin/bower'
+
+
+# Specifie path to components root (you need to use absolute path)
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+
+BOWER_INSTALLED_APPS = (
+    'd3#3.5.16',
+    'nvd3#1.8.1',
+)
+
+
+
