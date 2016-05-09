@@ -48,36 +48,6 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-
-
-
-
-
-
-
-                <h4>By employer_name</h4>
-                <div>
-                    {% if facets.fields.employer_name %}
-                        <dt>employer_name</dt>
-                        {# Provide only the top 5 employer_names #}
-                        {% for employer_name in facets.fields.employer_name|slice:":5" %}
-                            <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_name_exact:{{ employer_name.0|urlencode }}">{{ employer_name.0 }}</a> ({{ employer_name.1 }})</dd>
-                        {% endfor %}
-                   {% endif %}
-                </div>
-
-                <h4>By employer_address1</h4>
-                <div>
-                    <dl>
-                        {% if facets.fields.employer_address1 %}
-                            <dt>employer_address1</dt>
-                            {# Provide only the top 5 employer_address1s #}
-                            {% for employer_address1 in facets.fields.employer_address1|slice:":5" %}
-                                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_address1_exact:{{ employer_address1.0|urlencode }}">{{ employer_address1.0 }}</a> ({{ employer_address1.1 }})</dd>
-                            {% endfor %}
-                        {% endif %}
-                    </dl>
-                </div>
                 <!-- End Faceting --> 
             {% endif %}
         </div>
@@ -172,14 +142,10 @@
             //window.alert(res);
             for(var i=0; i<facet_arr.length; i++){
                 var facet_boxes=document.getElementsByName(facet_arr[i]+"[]");
-                var facet_str="";
                 for(var j=0; j<facet_boxes.length; j++){
                     if(facet_boxes[j].checked){
-                        facet_str=facet_str+encodeURIComponent(facet_boxes[j].value);
+                        res=res+"&amp;selected_facets="+facet_arr[i]+"_exact:"+encodeURIComponent(facet_boxes[j].value);
                     }
-                }
-                if(facet_str != ""){
-                    res=res+"&amp;selected_facets="+facet_arr[i]+"_exact:"+facet_str;
                 }
             }
             window.location=res;

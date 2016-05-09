@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .models import OflcPerm, OflcPerm_Review, OflcH1B, OflcH1B_Review
-from .forms import ReviewForm
+from .forms import ReviewForm, MultiFacetedSearchForm
 import datetime
 import pdb
 
@@ -145,6 +145,9 @@ class MyFacetedSearchView(FacetedSearchView):
             'case_status',
             'year',
         ]
+
+    form_class = MultiFacetedSearchForm
+
 
     
     def get_context_data(self, **kwargs):
