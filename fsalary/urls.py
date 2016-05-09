@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from reviews.views import MyFacetedSearchView, index
+from reviews.views import MyFacetedSearchView, index, filter_results
 
 
 #haystack begin
@@ -30,5 +30,6 @@ urlpatterns = [
 
     #haystack search
     url(r'^search/', MyFacetedSearchView.as_view(), name="haystack_search"),
+    url(r'^filter/', filter_results, name='filter_results'),
 ]
 

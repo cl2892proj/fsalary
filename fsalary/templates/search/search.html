@@ -9,34 +9,61 @@
         <h2>Search</h2>
 
         <!-- start search form -->
-        <form method="get" action=".">
-            <table>
-                {{ form.as_table }}
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>
-                        <input type="submit" value="Search">
-                    </td>
-                </tr>
-            </table>
+        <form method="get" action={% url 'haystack_search' %}>
+            {% csrf_token %}
+            {{ form.q }}
+            <input type="submit" value="Search">
         </form>
         <!--end search form-->
 
         <!--start left panel-->
         <div class="col-xs-12 col-sm-3">
             {% if query %}
+
+                <button type="button" class="btn btn-primary" onclick="sendFacetURL()">filter</button>
+
                 <!-- Begin Faceting -->
+                {% if facets.fields.employer_name %}
+                    <h4>Employer Name</h4>
+
+                    <div>
+                        {# Provide only the top 5 employer_names #}
+                        {% for employer_name in facets.fields.employer_name|slice:":5" %}
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="employer_name[]" value="{{ employer_name.0 }}">{{ employer_name.0 }} ({{ employer_name.1 }})</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if facets.fields.employer_address1 %}
+                    <h4>Employer Address</h4>
+
+                    <div>
+                        {# Provide only the top 5 addresses #}
+                        {% for employer_address1 in facets.fields.employer_address1|slice:":5" %}
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="employer_address1[]" value="{{ employer_address1.0 }}">{{ employer_address1.0 }} ({{ employer_address1.1 }})</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+
+
+
+
+
+
                 <h4>By employer_name</h4>
                 <div>
-                    <dl>
-                        {% if facets.fields.employer_name %}
-                            <dt>employer_name</dt>
-                            {# Provide only the top 5 employer_names #}
-                            {% for employer_name in facets.fields.employer_name|slice:":5" %}
-                                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_name_exact:{{ employer_name.0|urlencode }}">{{ employer_name.0 }}</a> ({{ employer_name.1 }})</dd>
-                            {% endfor %}
-                        {% endif %}
-                    </dl>
+                    {% if facets.fields.employer_name %}
+                        <dt>employer_name</dt>
+                        {# Provide only the top 5 employer_names #}
+                        {% for employer_name in facets.fields.employer_name|slice:":5" %}
+                            <dd><a href="{{ request.get_full_path }}&amp;selected_facets=employer_name_exact:{{ employer_name.0|urlencode }}">{{ employer_name.0 }}</a> ({{ employer_name.1 }})</dd>
+                        {% endfor %}
+                   {% endif %}
                 </div>
 
                 <h4>By employer_address1</h4>
@@ -134,4 +161,32 @@
         </div>
         <!--end main panel-->
     </div>
+
+    <script>
+        function sendFacetURL(){
+            var facet_arr=["employer_name","employer_address1"];
+            var curURL = "{{ request.get_full_path }}";
+            var arr = curURL.split("&amp;");
+            var res = (arr.length>1)?(arr[0]+"&amp;"+arr[1]):(arr[0]);
+            //window.alert(curURL);
+            //window.alert(res);
+            for(var i=0; i<facet_arr.length; i++){
+                var facet_boxes=document.getElementsByName(facet_arr[i]+"[]");
+                var facet_str="";
+                for(var j=0; j<facet_boxes.length; j++){
+                    if(facet_boxes[j].checked){
+                        facet_str=facet_str+encodeURIComponent(facet_boxes[j].value);
+                    }
+                }
+                if(facet_str != ""){
+                    res=res+"&amp;selected_facets="+facet_arr[i]+"_exact:"+facet_str;
+                }
+            }
+            window.location=res;
+
+            //arr.pop();
+            //window.location=arr.join("&amp;");
+            //window.alert(arr.join("&amp;"))
+        }
+    </script>
 {% endblock %}

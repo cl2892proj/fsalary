@@ -124,6 +124,15 @@ def add_review(request, year, case_number):
     return render(request, 'reviews/hiring_detail.html',context)
         
 
+
+def filter_results(request):
+    if request.method == 'GET':
+        form = FilterForm(request.GET)
+        #pdb.set_trace()
+        if form.is_valid():
+            print '{0}&selected_facets=employer_name_exact:'.format(request.get_full_path,)
+            #return HttpResponseRedirect(reverse('haystack_search'))
+
 class MyFacetedSearchView(FacetedSearchView):
     #pdb.set_trace()
     facet_fields = [
@@ -137,6 +146,7 @@ class MyFacetedSearchView(FacetedSearchView):
             'year',
         ]
 
+    
     def get_context_data(self, **kwargs):
         context = super(FacetedSearchView, self).get_context_data(**kwargs)
 

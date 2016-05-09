@@ -7,11 +7,12 @@ class ReviewForm(ModelForm):
         fields = ['comment',]
         widgets = {
             'comment': Textarea(attrs={ 'cols':40, 
-                                        'rows':5, 
+                                        'rows':5,
                                         'maxlength':400, 
                                         'class':"form-control",
                                         'placeholder':'comment',
                                         
                                         }) 
         }
+
 
