@@ -188,6 +188,35 @@ class MyFacetedSearchView(FacetedSearchView):
                 'tag_script_js': True,
                 'jquery_on_ready': True,
             }
+
+
+        #pagination
+        NUM_VISIBLE = 5
+
+        page_curr = context['page_obj'].number
+        page_last = context['page_obj'].paginator.num_pages
+
+        if page_last > NUM_VISIBLE:
+            i, j = 0, 0
+            while i + j <= NUM_VISIBLE:
+                if page_curr - i > 1:
+                    i += 1
+                if page_curr + j < page_last:
+                    j += 1
+            pages_visible = range(page_curr - i + 1, page_curr + j) 
+            first_dotdotdot = (min(pages_visible) > 2)
+            last_dotdotdot = (max(pages_visible) < page_last-1)
+        else:
+            pages_visible = [x+1 for x in range(1, page_last-1)]
+            first_dotdotdot = False
+            last_dotdotdot = False
+
+        
+
+        context['pages_visible'] = pages_visible
+        context['first_dotdotdot'] = first_dotdotdot
+        context['last_dotdotdot'] = last_dotdotdot
+
         
         return context
 
