@@ -133,6 +133,9 @@ def filter_results(request):
             print '{0}&selected_facets=employer_name_exact:'.format(request.get_full_path,)
             #return HttpResponseRedirect(reverse('haystack_search'))
 
+def make_facet_str(orig_str):
+    return ' '.join([x.title() for x in orig_str.split('_')])
+
 class MyFacetedSearchView(FacetedSearchView):
     #pdb.set_trace()
     facet_fields = [
@@ -146,12 +149,20 @@ class MyFacetedSearchView(FacetedSearchView):
             'year',
         ]
 
+    
     form_class = MultiFacetedSearchForm
 
 
     
     def get_context_data(self, **kwargs):
         context = super(FacetedSearchView, self).get_context_data(**kwargs)
+
+        """
+        facet strings
+        """
+        context['facet_fields'] = self.facet_fields
+        context['facet_text_pair'] = [(x, make_facet_str(x)) for x in self.facet_fields]
+
 
         """
         scatterchart page
