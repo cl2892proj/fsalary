@@ -6,17 +6,6 @@
 {% block search_block %}
 
     <div style="padding-left: 10px; padding-right: 10px;" class="container">
-
-        <h2>Search</h2>
-
-        <!-- start search form -->
-        <form method="get" action={% url 'haystack_search' %}>
-            {% csrf_token %}
-            {{ form.q }}
-            <input type="submit" value="Search">
-        </form>
-        <!--end search form-->
-
         <!--start left panel-->
         <div class="col-xs-12 col-sm-3">
             {% if query %}
