@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from reviews.views import MyFacetedSearchView, index, filter_results
+from reviews.views import MyFacetedSearchView, filter_results
 
 
 #haystack begin
@@ -24,12 +24,12 @@ from reviews.views import MyFacetedSearchView, index, filter_results
 #haystack end
 
 urlpatterns = [
-    url(r'^$', index),
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
+    url(r'^accounts/',include('django.contrib.auth.urls',namespace='auth')),
 
     #haystack search
-    url(r'^search/', MyFacetedSearchView.as_view(), name="haystack_search"),
+    url(r'^$', MyFacetedSearchView.as_view(), name="haystack_search"),
     url(r'^filter/', filter_results, name='filter_results'),
 ]
 

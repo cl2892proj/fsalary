@@ -2,7 +2,6 @@
 {% load humanize %}
 {% load nvd3_tags %}
 {% load custom_filter %}
-
 {% block search_block %}
 
     <div style="padding-left: 10px; padding-right: 10px;" class="container">
@@ -44,7 +43,6 @@
                     <div role="tabpanel" class="tab-pane active" id="detail">
                         {% if query %}
                             <h3>{{ page_obj.paginator.count }} Results</h3>
-
                             <nav>
                                 <ul class="pagination">
                                     <!-- previous page  -->
@@ -89,7 +87,7 @@
                                 </ul>
                             </nav>
 
-                            <table class="table">
+                            <table class="table table-striped">
                                 {% for result in object_list %}
                                     <tr>
                                         <td>{{ result.object.year }}</td>

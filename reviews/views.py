@@ -4,9 +4,11 @@ from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from .models import OflcPerm, OflcPerm_Review, OflcH1B, OflcH1B_Review
 from .forms import ReviewForm, MultiFacetedSearchForm
 import datetime
+import time
 import pdb
 
 
@@ -32,11 +34,6 @@ WAGE_UNIT_MAP = {
                     'yr':'year',
                     'year':'year',
                 }
-
-def index(request):
-    pass
-    #context = {'form':}
-    #return render(request, 'reviews/index.html', context)
 
 def wage_unit_std(unit):
     """used to standardize unit text for wage"""
@@ -103,7 +100,8 @@ def perm_detail(request, year, case_number, case_status):
     review_list = OflcPerm_Review.objects.filter(perm = perm)
     context = {'source':'perm', 'hire':hire, 'review_list':review_list, 'form':ReviewForm()}
     return render(request, 'reviews/hiring_detail.html', context)
-    
+
+@login_required
 def add_review(request, year, case_number):
     perm = get_object_or_404(OflcPerm, year=year, case_number=case_number)
     form = ReviewForm(request.POST)
@@ -112,7 +110,7 @@ def add_review(request, year, case_number):
         review = OflcPerm_Review()
         review.perm = perm
         review.pub_date = datetime.datetime.now()
-        review.user_name = 'user1'
+        review.user_name = request.user.username 
         review.comment = comment
         review.save()
         # Always return an HttpResponseRedirect after successfully dealing
@@ -124,20 +122,26 @@ def add_review(request, year, case_number):
     return render(request, 'reviews/hiring_detail.html',context)
         
 
+def user_review_list(request, username=None):
+    if not username:
+        username = request.user.username
+    latest_review_list = Review.objects.filter(user_name=username).order_by('-pub-date')
+    context = {'latest_review_list':latest_review_list, 'username':username}
+    return render(request, 'review/user_review_list.html', context)
 
 def filter_results(request):
     if request.method == 'GET':
         form = FilterForm(request.GET)
-        #pdb.set_trace()
         if form.is_valid():
             print '{0}&selected_facets=employer_name_exact:'.format(request.get_full_path,)
             #return HttpResponseRedirect(reverse('haystack_search'))
 
-def make_facet_str(orig_str):
-    return ' '.join([x.title() for x in orig_str.split('_')])
 
 class MyFacetedSearchView(FacetedSearchView):
-    #pdb.set_trace()
+    """
+    The main search result view
+    """
+
     facet_fields = [
             'employer_name',
             'employer_address1',
@@ -161,33 +165,36 @@ class MyFacetedSearchView(FacetedSearchView):
         facet strings
         """
         context['facet_fields'] = self.facet_fields
-        context['facet_text_pair'] = [(x, make_facet_str(x)) for x in self.facet_fields]
-
 
         """
         scatterchart page
         """
-        xdata = [i + random.randint(1, 10) for i in range(50)]
-        ydata1 = [i * random.randint(1, 10) for i in range(50)]
-        #xdata = [result.object.year for result in object_list]
-        #ydata1 = [result.object.prevailing_wage for result in object_list]
-        #ydata1 = [i * random.randint(1, 10) for i in range(nb_element)]
-        #ydata2 = map(lambda x: x * 2, ydata1)
-        #ydata3 = map(lambda x: x * 5, ydata1)
+        start_time = int(time.mktime(datetime.datetime(2012, 6, 1).timetuple()) * 1000)
+
+        nb_element = 2 
+        xdata = range(nb_element)
+        xdata = map(lambda x: start_time + x * 1000000000, xdata)
+        #pdb.set_trace()
+        ydata = [1,2]
+        ydata1 = map(lambda x: x * 2, ydata)
+        
+        #if not context['object_list']:
+        #    pdb.set_trace()
+        #    xdata = [result.object.get_start_date() for result in context['object_list']]
+        #    ydata1 = [result.object.get_base_salary() for result in context['object_list']]
+
 
         kwargs1 = {'shape': 'circle'}
-        #kwargs2 = {'shape': 'cross'}
-        #kwargs3 = {'shape': 'triangle-up'}
 
         extra_serie1 = {"tooltip": {"y_start": "", "y_end": " balls"}}
 
         chartdata = {
             'x': xdata,
             'name1': 'series 1', 'y1': ydata1, 'kwargs1': kwargs1, 'extra1': extra_serie1,
-            #'name2': 'series 2', 'y2': ydata2, 'kwargs2': kwargs2, 'extra2': extra_serie1,
-            #'name3': 'series 3', 'y3': ydata3, 'kwargs3': kwargs3, 'extra3': extra_serie1
         }
 
+        #charttype = "discreteBarChart"
+        #chartcontainer = 'discretebarchart_container'  # container name
         charttype = "scatterChart"
         chartcontainer = 'scatterchart_container'  # container name
         context['charttype'] = charttype 
@@ -195,7 +202,7 @@ class MyFacetedSearchView(FacetedSearchView):
         context['chartcontainer'] = chartcontainer
         context['d3_extra'] =  {
                 'x_is_date': True,
-                'x_axis_format': '%d-%b',
+                'x_axis_format': '%d %b %Y',
                 'tag_script_js': True,
                 'jquery_on_ready': True,
             }
@@ -230,39 +237,3 @@ class MyFacetedSearchView(FacetedSearchView):
 
         
         return context
-
-       # """
-       # scatterchart page
-       # """
-       # nb_element = 50
-       # xdata = [i + random.randint(1, 10) for i in range(nb_element)]
-       # ydata1 = [i * random.randint(1, 10) for i in range(nb_element)]
-       # ydata2 = map(lambda x: x * 2, ydata1)
-       # ydata3 = map(lambda x: x * 5, ydata1)
-
-       # kwargs1 = {'shape': 'circle'}
-       # kwargs2 = {'shape': 'cross'}
-       # kwargs3 = {'shape': 'triangle-up'}
-
-       # extra_serie1 = {"tooltip": {"y_start": "", "y_end": " balls"}}
-
-       # chartdata = {
-       #     'x': xdata,
-       #     'name1': 'series 1', 'y1': ydata1, 'kwargs1': kwargs1, 'extra1': extra_serie1,
-       #     'name2': 'series 2', 'y2': ydata2, 'kwargs2': kwargs2, 'extra2': extra_serie1,
-       #     'name3': 'series 3', 'y3': ydata3, 'kwargs3': kwargs3, 'extra3': extra_serie1
-       # }
-
-       # charttype = "scatterChart"
-       # chartcontainer = 'scatterchart_container'  # container name
-       # context['charttype'] = charttype 
-       # context['chartdata'] = chartdata 
-       # context['chartcontainer'] = chartcontainer
-       # context['d3_extra'] =  {
-       #         'x_is_date': True,
-       #         'x_axis_format': '%d-%b',
-       #         'tag_script_js': True,
-       #         'jquery_on_ready': True,
-       #     }
-       # 
-       # return context

@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.core.urlresolvers import reverse
+import datetime, time
+import pdb
+
 
 # Create your models here.
 class OflcH1B(models.Model):
@@ -47,6 +50,12 @@ class OflcH1B(models.Model):
                             'wage_rate_of_pay_from':self.wage_rate_of_pay_from or '',
                                 }
                         )
+
+    def get_start_date(self):
+        return int(time.mktime(self.employment_start_date.timetuple()) * 1000)
+
+    def get_base_salary(self):
+        return self.wage_rate_of_pay_from
 
     #def __unicode(self):
     #    return self.job_title
@@ -99,6 +108,13 @@ class OflcPerm(models.Model):
                             'case_status':self.case_status,
                                 }
                         )
+
+    def get_start_date(self):
+        return int(time.mktime(self.decision_date.timetuple()) * 1000)
+
+    def get_base_salary(self):
+        return self.wage_offer_from_9089
+
     class Meta:
         unique_together = ('year', 'case_number', 'case_status')
     

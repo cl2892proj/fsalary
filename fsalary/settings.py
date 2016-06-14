@@ -57,7 +57,7 @@ SECRET_KEY = FRANKSALARY_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','0.0.0.0']
 
 
 # Application definition
@@ -93,7 +93,7 @@ ROOT_URLCONF = 'fsalary.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR+'/fsalary/templates/',],
+        'DIRS': [BASE_DIR+'/templates/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -162,6 +162,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+#STATIC_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 
 # Django-bower
