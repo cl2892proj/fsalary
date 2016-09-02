@@ -1,0 +1,8 @@
+{{ object.employer_name }}
+{{ object.get_work_location }}
+{{ object.job_title }}
+{{ object.get_start_date }}
+
+
+
+                                            <td><a href="{{ result.object.get_absolute_url }}"><p>{{ result.object.source }}</p></a></td>

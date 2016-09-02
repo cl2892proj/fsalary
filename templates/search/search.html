@@ -4,26 +4,24 @@
 {% load custom_filter %}
 {% block search_block %}
 
+    {% if query %}
     <div style="padding-left: 10px; padding-right: 10px;" class="container">
         <!--start left panel-->
         <div class="col-xs-12 col-sm-3">
-            {% if query %}
+            <button type="button" class="btn btn-primary btn-block" onclick="sendFacetURL()">filter</button>
 
-                <button type="button" class="btn btn-primary btn-block" onclick="sendFacetURL()">filter</button>
-
-                <!-- Begin Faceting -->
-                {% for key_field, vals in facets.fields.items %}
-                    <h4>{{ key_field|title_facet }}</h4>
-                    <div>
-                        {% for one_item in vals|slice:":5" %}
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0 }} ({{ one_item.1 }})</label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-                <!-- End Faceting --> 
-            {% endif %}
+            <!-- Begin Faceting -->
+            {% for key_field, vals in facets.fields.items %}
+                <h4>{{ key_field|title_facet }}</h4>
+                <div>
+                    {% for one_item in vals|slice:":5" %}
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0 }} ({{ one_item.1 }})</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <!-- End Faceting --> 
         </div>
         <!--end left panel-->
 
@@ -61,83 +59,78 @@
                                     <!-- first ... -->
                                     {% if first_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
 
-                                    <!-- middle pages -->
-                                    {% for i in pages_visible %}
-                                    <li {% if page_obj.number == i %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ i }}">{{ i }}</a></li>
+                                        <!-- middle pages -->
+                                        {% for i in pages_visible %}
+                                        <li {% if page_obj.number == i %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ i }}">{{ i }}</a></li>
+                                        {% endfor %}
+
+                                        <!-- second ... -->
+                                        {% if last_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
+
+                                        <!-- last page -->
+                                        {% if page_obj.paginator.num_pages > 1 %}
+                                        <li {% if page_obj.number == page_obj.paginator.num_pages %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
+                                        {% endif %}
+
+
+                                        <!-- next page -->
+                                        <li {% if not page_obj.has_next %}class="disabled"{% endif %}>
+                                            <a href={% if not page_obj.has_next %}"#"
+                                                    {% else %}
+                                                        "{{ request.get_full_path }}&page={{ page_obj.next_page_number }}"
+                                                    {% endif %}>
+                                                <span>Next page &raquo;</span>
+                                            </a> 
+                                        </li>
+                                    </ul>
+                                </nav>
+
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Employer</th>
+                                            <th>Job Title</th>
+                                            <th>Base Salary</th>
+                                            <th>Work Location</th>
+                                            <th>Start Date</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for result in object_list %}
+                                        <tr>
+                                            <td>{{ result.object.employer_name }}</td>
+                                            <td>{{ result.object.job_title }}</td>
+                                            <td>{{ result.object.get_base_salary|floatformat:"0"|intcomma }} / {{ result.object.get_unit }}</td>
+                                            <td>{{ result.object.get_work_location }}</td>
+                                            <td>{{ result.object.get_start_date|date:"m/d/Y" }}</td>
+                                            <td>{{ result.object.get_absolute_url }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <p>No results found.</p>
                                     {% endfor %}
+                                    </tbody>
+                                </table>
 
-                                    <!-- second ... -->
-                                    {% if last_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
+                            {% else %}
+                                {# Show some example queries to run, maybe query syntax, something else? #}
+                            {% endif %}
+                        </div>
+                        <!--detail pane ends-->
 
-                                    <!-- last page -->
-                                    {% if page_obj.paginator.num_pages > 1 %}
-                                    <li {% if page_obj.number == page_obj.paginator.num_pages %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
-                                    {% endif %}
-
-
-                                    <!-- next page -->
-                                    <li {% if not page_obj.has_next %}class="disabled"{% endif %}>
-                                        <a href={% if not page_obj.has_next %}"#"
-                                                {% else %}
-                                                    "{{ request.get_full_path }}&page={{ page_obj.next_page_number }}"
-                                                {% endif %}>
-                                            <span>Next page &raquo;</span>
-                                        </a> 
-                                    </li>
-                                </ul>
-                            </nav>
-
-                            <table class="table table-striped">
-                                {% for result in object_list %}
-                                    <tr>
-                                        <td>{{ result.object.year }}</td>
-                                        <td>{{ result.object.job_title }}</td>
-                                        <td>
-                                            {%if result.object.wage_rate_of_pay_from %}
-                                                {{ result.object.wage_rate_of_pay_from|floatformat:"0"|intcomma }}  
-                                            {% else %}
-                                                {{ result.object.prevailing_wage|floatformat:"0"|intcomma  }} 
-                                            {% endif %} /  
-                                            {{ result.object.wage_unit_of_pay }} 
-                                        </td>
-                                        <td>{{ result.object.employer_name }}</td>
-                                        <td>
-                                            {{ result.object.employer_address1}}
-                                            {%if  result.object.employer_address2 %}
-                                                {{ result.object.employer_address2}}
-                                            {% endif %}
-                                            ,<br>
-                                            {{ result.object.employer_city}}, {{ result.object.employer_state}}
-                                            {{ result.object.employer_postal_code}}
-                                        </td>
-                                        <td><a href="{{ result.object.get_absolute_url }}"><p>view</p></a></td>
-                                    </tr>
-                                {% empty %}
-                                    <p>No results found.</p>
-                                {% endfor %}
-
-                            </table>
-
-                        {% else %}
-                            {# Show some example queries to run, maybe query syntax, something else? #}
-                        {% endif %}
+                        <div role="tabpanel" class="tab-pane" id="graph">
+                            {% include_chart_jscss %}
+                            {% load_chart charttype chartdata chartcontainer d3_extra %}
+                            {% include_container chartcontainer%}
+                        </div>
                     </div>
-                    <!--detail pane ends-->
 
-                    <div role="tabpanel" class="tab-pane" id="graph">
-                        {% include_chart_jscss %}
-                        {% load_chart charttype chartdata chartcontainer d3_extra %}
-                        {% include_container chartcontainer%}
-                    </div>
                 </div>
 
+
+
             </div>
-
-
-
+            <!--end main panel-->
         </div>
-        <!--end main panel-->
-    </div>
+    {% endif %}
 
     <script>
         function sendFacetURL(){

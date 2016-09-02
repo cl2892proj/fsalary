@@ -26,6 +26,7 @@ from reviews.views import MyFacetedSearchView, filter_results
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
+    url(r'^accounts/',include('registration.backends.simple.urls')),
     url(r'^accounts/',include('django.contrib.auth.urls',namespace='auth')),
 
     #haystack search

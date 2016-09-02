@@ -24,16 +24,18 @@ from private_settings import *
 import elasticsearch
 from requests_aws4auth import AWS4Auth
 
-#Haystack Settings
-
 awsauth = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
 
+########################################
+# Haystack Settings BEGIN
+########################################
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': AWS_ES_FSALARY_ENDPOINT,
-        'TIMEOUT': 60 * 5, #5 min
+        'TIMEOUT': 10 * 6, #1 min
         'INDEX_NAME': 'haystack',
+        'INCLUDE_SPELLING': True,
         'KWARGS':{
             'port':443,
             'http_auth':awsauth,
@@ -43,6 +45,25 @@ HAYSTACK_CONNECTIONS = {
         },
     },
 }
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack_rqueue.signals.RQueueSignalProcessor'
+
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': AWS_CACHE_HAYSTACKRQ_ENDPOINT,
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT':360,
+    },
+}
+
+########################################
+# Haystack Settings END
+########################################
+
+
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,6 +80,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','0.0.0.0']
 
+#registration-redux
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
+REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
+
 
 # Application definition
 
@@ -70,11 +95,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'registration',
     'reviews',
-    'haystack',
     'elasticsearch',
     'django_nvd3',
     'djangobower',
+    'bootstrap3',
+
+    #django debug toolbar
+    #'debug_toolbar',
+
+    #queue up the search jobs with Redis Queue
+    'haystack',
+    'django_rq',
+    'haystack_rqueue',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -86,6 +120,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    #django debug toolbar
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'fsalary.urls'
@@ -164,6 +201,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 #STATIC_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+
 
 
 # Django-bower

@@ -1,12 +1,12 @@
 from django.forms import ModelForm, Textarea
-from reviews.models import OflcPerm_Review 
+from reviews.models import Hire_Review 
 from haystack.forms import SearchForm
 from collections import defaultdict
 import pdb
 
 class ReviewForm(ModelForm):
     class Meta:
-        model = OflcPerm_Review 
+        model = Hire_Review 
         fields = ['comment',]
         widgets = {
             'comment': Textarea(attrs={ 'cols':40, 

@@ -1,8 +1,0 @@
-{{ object.employer_name }}
-{{ object.employer_address1 }}
-{{ object.employer_city }}
-{{ object.employer_state }}
-{{ object.employer_postal_code }}
-{{ object.job_title }}
-{{ object.case_status}}
-{{ object.year}}

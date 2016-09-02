@@ -4,60 +4,38 @@
 
 {% block content %}
     <div class="container contentContainer">
+        <h3>{{ hire.employer }}</h3>
         <h3>{{ hire.job_title }}</h3>
+        <h3>{{ hire.employer_address1 }}</h3>
+        <h3>{{ hire.employer_address2 }}</h3>
+        <h3>{{ hire.employer_city }}</h3>
+        <h3>{{ hire.employer_state }}</h3>
+        <h3>{{ hire.employer_zipcode }}</h3>
+        <h3>{{ hire.wage_from_1 }}</h3>
+        <h3>{{ hire.wage_to_1 }}</h3>
+        <h3>{{ hire.rate_unit_1 }}</h3>
+        <h3>{{ hire.annualized_rate }}</h3>
+        <h3>{{ hire.employment_start_date }}</h3>
+        <h3>{{ hire.work_location_city1 }}</h3>
+        <h3>{{ hire.work_location_state1 }}</h3>
+
+
         <table class="table">
             <tr>
-                <td>Wage Rate</td>
-                <td>{{ hire.wage|floatformat:"0"|intcomma }} per {{ hire.wage_unit }}</td>
+                <td>Wage Range Low</td>
+                <td>{{ hire.wage_from_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
+
             <tr>
-                <td>Employment Start Date (circa)</td>
-                <td>{{ hire.start_date }}</td>
+                <td>Wage Range High</td>
+                <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
+
             <tr>
-                <td>Employer Name</td>
-                <td>{{ hire.employer_name }}</td>
+                <td>Work Location City</td>
+                <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
-            <tr>
-                <td>Employer Address1</td>
-                <td>{{ hire.employer_address1 }}</td>
-            </tr>
-            <tr>
-                <td>Employer Address2</td>
-                <td>{{ hire.employer_address2 }}</td>
-            </tr>
-            <tr>
-                <td>Employer City</td>
-                <td>{{ hire.employer_city }}</td>
-            </tr>
-            <tr>
-                <td>Employer State</td>
-                <td>{{ hire.employer_state }}</td>
-            </tr>
-            <tr>
-                <td>Employer Zipcode</td>
-                <td>{{ hire.employer_zipcode }}</td>
-            </tr>
-            <tr>
-                <td>Employer Employee Headcount</td>
-                <td>{{ hire.employer_num_employees }}</td>
-            </tr>
-            <tr>
-                <td>Employer Year Established</td>
-                <td>{{ hire.employer_yr_estab }}</td>
-            </tr>
-            <tr>
-                <td>Employee Education Level</td>
-                <td>{{ hire.education }}</td>
-            </tr>
-            <tr>
-                <td>Employee Major of Study</td>
-                <td>{{ hire.major }}</td>
-            </tr>
-            <tr>
-                <td>Class of Admission</td>
-                <td>{{ hire.class_of_admission }}</td>
-            </tr>
+
 
         </table>
 

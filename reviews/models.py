@@ -6,122 +6,224 @@ import datetime, time
 import pdb
 
 
-# Create your models here.
-class OflcH1B(models.Model):
-    year = models.IntegerField()
-    case_no = models.TextField()
-    case_status = models.TextField()
-    case_submitted = models.DateField(null=True)
-    employment_start_date = models.DateField(null=True)
-    employment_end_date = models.DateField(null=True)
+WAGE_UNIT_MAP = {
+                    'hr':'hour',
+                    'hour':'hour',
+
+                    'wk':'week',
+                    'week':'week',
+                    
+                    'bi':'bi-week',
+                    'bi-weekly':'bi-week',
+
+                    'mth':'month',
+                    'month':'month',
+
+                    'yr':'year',
+                    'year':'year',
+                }
+
+UNIT_MULTIPLIER = {
+            'year': 1,
+            'month': 12,
+            'bi-week': 26,
+            'week': 52,
+            'hour': 52 * 40,
+        }
+
+def wage_unit_std(unit):
+    """used to standardize unit text for wage"""
+    try:
+        return WAGE_UNIT_MAP[unit.lower()]
+    except:
+        return ''
+
+
+# The following functions are shared by every table
+# so instead of writing a customized codes for every table
+# we write the following generic functions
+# to use the functions, we simply pass in a list of column headers for each table
+
+def get_start_date(lst):
+    for i in lst:
+        if i:
+            return i
+
+def get_base_salary(lst):
+    for i in lst:
+        if i:
+            return i
+    return 0
+
+def get_unit(lst):
+    for i in lst:
+        if wage_unit_std(i):
+            return wage_unit_std(i)
+    return ''
+
+def get_work_location(lst):
+    #lst is a list of (city, state) tuple
+    #the last tuple is always employer city, state
+    for i in lst:
+        if all(i):
+            city = i[0]
+            state = i[1]
+            return city+', '+state
+    employer_city = lst[-1][0] if lst[-1][0] else ''
+    employer_state = lst[-1][1] if lst[-1][1] else ''
+    return employer_city+', '+employer_state
+
+class Hire_Review(models.Model):
     employer_name = models.TextField(null=True)
-    employer_address1 = models.TextField(null=True)
-    employer_address2 = models.TextField(null=True)
-    employer_city = models.TextField(null=True)
-    employer_state = models.TextField(null=True)
-    employer_postal_code = models.TextField(null=True)
-    employer_country = models.TextField(null=True)
-    employer_province = models.TextField(null=True)
-    employer_phone = models.TextField(null=True)
-    employer_phone_ext = models.TextField(null=True)
     job_title = models.TextField(null=True)
-    full_time_position = models.TextField(null=True)
-    prevailing_wage = models.FloatField(null=True)
-    pw_unit_of_pay = models.TextField(null=True)
-    wage_rate_of_pay_from = models.FloatField(null=True)
-    wage_rate_of_pay_to = models.FloatField(null=True)
-    wage_unit_of_pay = models.TextField(null=True)
-    worksite_city = models.TextField(null=True)
-    worksite_county = models.TextField(null=True)
-    worksite_state = models.TextField(null=True)
-    worksite_postal_code = models.TextField(null=True)
-    lca_case_workloc2_city = models.TextField(null=True)
-    lca_case_workloc2_state = models.TextField(null=True)
-    pw_2 = models.FloatField(null=True)
-    pw_unit_2 = models.TextField(null=True)
-    
-    def get_absolute_url(self):
-        return reverse('reviews:h1b_detail',
-                        kwargs={
-                            'year':self.year,
-                            'case_no':self.case_no,
-                            'case_status':self.case_status,
-                            'prevailing_wage':self.prevailing_wage or '',
-                            'wage_rate_of_pay_from':self.wage_rate_of_pay_from or '',
-                                }
-                        )
-
-    def get_start_date(self):
-        return int(time.mktime(self.employment_start_date.timetuple()) * 1000)
-
-    def get_base_salary(self):
-        return self.wage_rate_of_pay_from
-
-    #def __unicode(self):
-    #    return self.job_title
-
-
-    class Meta:
-        unique_together = ('year' 
-                            , 'case_no'
-                            , 'case_status'
-                            , 'prevailing_wage'
-                            , 'wage_rate_of_pay_from'
-                            )
-
-class OflcH1B_Review(models.Model):
-    h1b = models.ForeignKey(OflcH1B)
+    salary = models.FloatField(null=True)
+    job_date = models.DateField(null=True)
     pub_date = models.DateTimeField('date published')
     user_name = models.CharField(max_length=30)
     comment = models.CharField(max_length=1000)
+    parent = models.ForeignKey('self',null=True)
 
-class OflcPerm(models.Model):
-    year = models.IntegerField()
-    case_number = models.TextField()
-    decision_date = models.DateField(null=True)
-    case_status = models.TextField(null=True)
-    case_received_date = models.DateField(null=True)
+class Hires(models.Model):
+    source = models.TextField(null=True) #eg. H1B, H2B, Proxy etc
+    pid = models.IntegerField(primary_key=True)
     employer_name = models.TextField(null=True)
     employer_address1 = models.TextField(null=True)
     employer_address2 = models.TextField(null=True)
     employer_city = models.TextField(null=True)
     employer_state = models.TextField(null=True)
-    employer_country = models.TextField(null=True)
     employer_postal_code = models.TextField(null=True)
-    employer_num_employees = models.FloatField(null=True)
-    employer_yr_estab = models.FloatField(null=True)
-    pw_amount_9089 = models.FloatField(null=True)
-    pw_unit_of_pay_9089 = models.TextField(null=True)
-    wage_offer_from_9089 = models.FloatField(null=True)
-    wage_offer_to_9089 = models.FloatField(null=True)
-    wage_offer_unit_of_pay_9089 = models.TextField(null=True)
     job_title = models.TextField(null=True)
-    job_info_education = models.TextField(null=True)
-    job_info_major = models.TextField(null=True)
+    wage_from_1 = models.FloatField(null=True)
+    wage_to_1 = models.FloatField(null=True)
+    rate_unit_1 = models.TextField(null=True)
+    std_title = models.TextField(null=True)
+
+    class Meta:
+        abstract = True
+
+# Create your models here.
+class Hires_H1B(Hires):
+    submitted_date = models.DateField(null=True)
+    case_number = models.TextField(null=True)
+    employment_start_date = models.DateField(null=True)
+    pw_1 = models.FloatField(null=True)
+    pw_unit_1 = models.TextField(null=True)
+    work_location_city1 = models.TextField(null=True)
+    work_location_state1 = models.TextField(null=True)
+    wage_from_2 = models.FloatField(null=True)
+    wage_to_2 = models.FloatField(null=True)
+    rate_unit_2 = models.TextField(null=True)
+    pw_2 = models.FloatField(null=True)
+    pw_unit_2 = models.TextField(null=True)
+    work_location_city2 = models.TextField(null=True)
+    work_location_state2 = models.TextField(null=True)
+
+    def get_absolute_url(self):
+        return reverse('reviews:h1b_detail',
+                        kwargs={
+                                    'pid':self.pid,
+                                }
+                        )
+    
+    def get_start_date(self):
+        return get_start_date(
+                    [
+                        self.employment_start_date,
+                        self.submitted_date,
+                    ]
+                )
+
+    def get_base_salary(self):
+        return get_base_salary(
+                    [
+                        self.wage_to_1,
+                        self.wage_from_1,
+                        self.wage_to_2,
+                        self.wage_from_2,
+                        self.pw_1,
+                        self.pw_2,
+                    ]
+                )
+
+    def get_work_location(self):
+        return get_work_location(
+                    [
+                        (self.work_location_city1, self.work_location_state1),
+                        (self.work_location_city2, self.work_location_state2),
+                        (self.employer_city, self.employer_state)
+                    ] 
+                )
+    
+
+    def get_unit(self):
+        return get_unit(
+                    [
+                        self.rate_unit_1,
+                        self.rate_unit_2,
+                        self.pw_unit_1,
+                        self.pw_unit_2,
+                    ] 
+                )
+
+    def get_annual_base_salary(self):
+        # return annualized salary for apple to apple comparison
+        unit = self.get_unit()
+        base = self.get_base_salary()
+        return base * UNIT_MULTIPLIER[unit] 
+
+class Hires_Perm(Hires):
+    decision_date = models.DateField(null=True) 
+    case_number = models.TextField(null=True)
+    pw_1 = models.FloatField(null=True)
+    pw_unit_1 = models.TextField(null=True)
+    work_location_city1 = models.TextField(null=True)
+    work_location_state1 = models.TextField(null=True)
+    job_info_education  = models.TextField(null=True)
+    job_info_major  = models.TextField(null=True)
+    country_of_citizenship  = models.TextField(null=True)
     class_of_admission = models.TextField(null=True)
 
     def get_absolute_url(self):
         return reverse('reviews:perm_detail',
                         kwargs={
-                            'year':self.year,
-                            'case_number':self.case_number,
-                            'case_status':self.case_status,
+                                    'pid':self.pid,
                                 }
                         )
 
     def get_start_date(self):
-        return int(time.mktime(self.decision_date.timetuple()) * 1000)
+        return get_start_date(
+                    [
+                        self.decision_date,
+                    ]
+                )
 
     def get_base_salary(self):
-        return self.wage_offer_from_9089
+        return get_base_salary(
+                    [
+                        self.wage_to_1,
+                        self.wage_from_1,
+                        self.pw_1,
+                    ]
+                )
 
-    class Meta:
-        unique_together = ('year', 'case_number', 'case_status')
-    
-    
-class OflcPerm_Review(models.Model):
-    perm = models.ForeignKey(OflcPerm)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
+    def get_unit(self):
+        return get_unit(
+                    [
+                        self.rate_unit_1,
+                        self.pw_unit_1,
+                    ] 
+                )
 
+    def get_work_location(self):
+        return get_work_location(
+                    [
+                        (self.work_location_city1, self.work_location_state1),
+                        (self.employer_city, self.employer_state)
+                    ] 
+                )
+    def get_annual_base_salary(self):
+        # return annualized salary for apple to apple comparison
+        unit = self.get_unit()
+        base = self.get_base_salary()
+        return base * UNIT_MULTIPLIER[unit] 
+    
