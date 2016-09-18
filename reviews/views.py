@@ -36,7 +36,9 @@ def hire_detail(request, pid, source):
         job = get_object_or_404(Hires_Perm, pid = pid )
         data_source = 'PERM Public Disclosure'
     else:
+        print '##### ERROR #####'
         print source + ' is an unexpected source'
+        print '##### ERROR #####'
 
 
     hire = {
@@ -61,12 +63,11 @@ def hire_detail(request, pid, source):
     review_list = Hire_Review.objects.filter(
                 employer_name = job.employer_name,
                 job_title = job.job_title,
-                year = job.get_start_date().year,
                 salary = job.get_base_salary(),
                 job_date = job.get_start_date(),
             )
     context = {'hire':hire, 'review_list':review_list, 'form':ReviewForm()}
-    return render(request, 'reviews/h1b_detail.html', context)
+    return render(request, 'reviews/hiring_detail.html', context)
 
 @login_required
 def add_review(request, employer_name, job_title, job_date, salary):

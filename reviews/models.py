@@ -119,9 +119,10 @@ class Hires_H1B(Hires):
     work_location_state2 = models.TextField(null=True)
 
     def get_absolute_url(self):
-        return reverse('reviews:h1b_detail',
+        return reverse('reviews:hire_detail',
                         kwargs={
                                     'pid':self.pid,
+                                    'source':'H1B',
                                 }
                         )
     
@@ -184,9 +185,10 @@ class Hires_Perm(Hires):
     class_of_admission = models.TextField(null=True)
 
     def get_absolute_url(self):
-        return reverse('reviews:perm_detail',
+        return reverse('reviews:hire_detail',
                         kwargs={
                                     'pid':self.pid,
+                                    'source':'PERM',
                                 }
                         )
 

@@ -103,7 +103,7 @@ INSTALLED_APPS = [
     'bootstrap3',
 
     #django debug toolbar
-    #'debug_toolbar',
+    'debug_toolbar',
 
     #queue up the search jobs with Redis Queue
     'haystack',
@@ -209,6 +209,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # ------------
 STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',       
 )
 
 BOWER_PATH = '/usr/local/bin/bower'

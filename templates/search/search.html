@@ -102,7 +102,7 @@
                                             <td>{{ result.object.get_base_salary|floatformat:"0"|intcomma }} / {{ result.object.get_unit }}</td>
                                             <td>{{ result.object.get_work_location }}</td>
                                             <td>{{ result.object.get_start_date|date:"m/d/Y" }}</td>
-                                            <td>{{ result.object.get_absolute_url }}</td>
+                                            <td><a href={{ result.object.get_absolute_url }}>Detail</a></td>
                                         </tr>
                                     {% empty %}
                                         <p>No results found.</p>

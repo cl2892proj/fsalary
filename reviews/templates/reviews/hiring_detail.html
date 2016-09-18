@@ -4,23 +4,42 @@
 
 {% block content %}
     <div class="container contentContainer">
-        <h3>{{ hire.employer }}</h3>
-        <h3>{{ hire.job_title }}</h3>
-        <h3>{{ hire.employer_address1 }}</h3>
-        <h3>{{ hire.employer_address2 }}</h3>
-        <h3>{{ hire.employer_city }}</h3>
-        <h3>{{ hire.employer_state }}</h3>
-        <h3>{{ hire.employer_zipcode }}</h3>
-        <h3>{{ hire.wage_from_1 }}</h3>
-        <h3>{{ hire.wage_to_1 }}</h3>
-        <h3>{{ hire.rate_unit_1 }}</h3>
-        <h3>{{ hire.annualized_rate }}</h3>
-        <h3>{{ hire.employment_start_date }}</h3>
-        <h3>{{ hire.work_location_city1 }}</h3>
-        <h3>{{ hire.work_location_state1 }}</h3>
+        <h4>{{ hire.employer }}</h4>
+        <h4>{{ hire.job_title }}</h4>
 
 
         <table class="table">
+            <tr>
+                <td>Employer Address Street</td>
+                <td>{{ hire.employer_address1 }} {{ hire.employer_address2 }}</td>
+            </tr>
+            <tr>
+                <td>Employer Address City</td>
+                <td>{{ hire.employer_city }}</td>
+            </tr>
+            <tr>
+                <td>Employer Address State</td>
+                <td>{{ hire.employer_state }}</td>
+            </tr>
+            <tr>
+                <td>Employer Address Zipcode</td>
+                <td>{{ hire.employer_zipcode }}</td>
+            </tr>
+            <tr>
+                <td>Salary Annualized</td>
+                <td>{{ hire.annualized_rate|floatformat:"0"|intcomma }}</td>
+            <tr>
+                <td>Employment Start Date</td>
+                <td>{{ hire.employment_start_date }}</td>
+            </tr>
+            <tr>
+                <td>Work Location City</td>
+                <td>{{ hire.work_location_city1 }}</td>
+            </tr>
+            <tr>
+                <td>Work Location State</td>
+                <td>{{ hire.work_location_state1 }}</td>
+            </tr>
             <tr>
                 <td>Wage Range Low</td>
                 <td>{{ hire.wage_from_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
@@ -30,17 +49,10 @@
                 <td>Wage Range High</td>
                 <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
-
-            <tr>
-                <td>Work Location City</td>
-                <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
-            </tr>
-
-
         </table>
 
 
-        <h3>Recent reviews</h3>
+        <h4>Recent reviews</h4>
         {% if review_list %}
             <div class="row">
                 {% for review in review_list %}
@@ -54,9 +66,9 @@
             <p>No review for this hiring yet</p>
         {% endif %}
 
-        <h3>Add your review</h3>
+        <h4>Add your review</h4>
 
-        <form action="{% url 'reviews:add_review' year=hire.year case_number=hire.case_number %}" method="post" class="form">
+        <form action="{% url 'reviews:add_review' hire.employer hire.job_title hire.employment_start_date|date:"Y-m-d" hire.wage_from_1 %}" method="post" class="form">
             {% csrf_token %}
              <div class="form-group">
                 {{ form.comment }}
