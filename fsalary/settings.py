@@ -78,7 +78,7 @@ SECRET_KEY = FRANKSALARY_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','0.0.0.0']
+ALLOWED_HOSTS = ['localhost','0.0.0.0','127.0.0.1']
 
 #registration-redux
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
@@ -102,6 +102,11 @@ INSTALLED_APPS = [
     'djangobower',
     'bootstrap3',
 
+    #comments:
+    #'django.contrib.comments',
+    #'mptt',
+    #'comments',
+
     #django debug toolbar
     'debug_toolbar',
 
@@ -110,6 +115,8 @@ INSTALLED_APPS = [
     'django_rq',
     'haystack_rqueue',
 ]
+
+#COMMENTS_APP = 'comments'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',

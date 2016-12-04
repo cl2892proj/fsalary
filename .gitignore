@@ -1,6 +1,7 @@
 *.pyc
 fsalary/private_settings.py
-reviews/migrations/*
 components/*
 static/*
 *.swp
+*/insert_app_data/excel/*
+*.log

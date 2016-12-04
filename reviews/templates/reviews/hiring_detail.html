@@ -67,8 +67,7 @@
         {% endif %}
 
         <h4>Add your review</h4>
-
-        <form action="{% url 'reviews:add_review' hire.employer hire.job_title hire.employment_start_date|date:"Y-m-d" hire.wage_from_1 %}" method="post" class="form">
+        <form action="{% url 'reviews:add_review' source=hire.source employer_name=hire.employer job_title=hire.job_title job_date=hire.employment_start_date|date:"Y-m-d" salary=hire.wage_from_1 %}" method="post" class="form">
             {% csrf_token %}
              <div class="form-group">
                 {{ form.comment }}

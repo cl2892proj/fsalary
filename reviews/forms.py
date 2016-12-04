@@ -1,24 +1,9 @@
 from django.forms import ModelForm, Textarea
-from reviews.models import Hire_Review 
 from haystack.forms import SearchForm
 from collections import defaultdict
 import pdb
 
-class ReviewForm(ModelForm):
-    class Meta:
-        model = Hire_Review 
-        fields = ['comment',]
-        widgets = {
-            'comment': Textarea(attrs={ 'cols':40, 
-                                        'rows':5,
-                                        'maxlength':400, 
-                                        'class':"form-control",
-                                        'placeholder':'comment',
-                                        
-                                        }) 
-        }
-
-
+# The key here is to use the ModelForm factory function
 class MultiFacetedSearchForm(SearchForm):
     def __init__(self, *args, **kwargs):
         self.selected_facets = kwargs.pop("selected_facets", [])

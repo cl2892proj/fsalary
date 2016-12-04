@@ -1,4 +1,0 @@
-{{ object.employer_name }}
-{{ object.get_work_location }}
-{{ object.job_title }}
-{{ object.get_start_date }}

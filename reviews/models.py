@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 import datetime, time
 import pdb
 
+DEFAULT_DATE = datetime.date(1900,1,1)
 
 WAGE_UNIT_MAP = {
                     'hr':'hour',
@@ -73,19 +74,15 @@ def get_work_location(lst):
     employer_state = lst[-1][1] if lst[-1][1] else ''
     return employer_city+', '+employer_state
 
-class Hire_Review(models.Model):
-    employer_name = models.TextField(null=True)
-    job_title = models.TextField(null=True)
-    salary = models.FloatField(null=True)
-    job_date = models.DateField(null=True)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self',null=True)
-
 class Hires(models.Model):
-    source = models.TextField(null=True) #eg. H1B, H2B, Proxy etc
-    pid = models.IntegerField(primary_key=True)
+    #primary key
+    pid = models.AutoField(primary_key=True)
+
+    # this field is used as a timestamp for indexing
+    updated_time = models.DateTimeField(null=True)
+
+    # other fields
+    employment_confirmed = models.BooleanField()
     employer_name = models.TextField(null=True)
     employer_address1 = models.TextField(null=True)
     employer_address2 = models.TextField(null=True)
@@ -97,9 +94,20 @@ class Hires(models.Model):
     wage_to_1 = models.FloatField(null=True)
     rate_unit_1 = models.TextField(null=True)
     std_title = models.TextField(null=True)
+    count = models.IntegerField()
 
     class Meta:
         abstract = True
+
+    def get_annual_base_salary(self):
+        # return annualized salary for apple to apple comparison
+        unit = self.get_unit()
+        base = self.get_base_salary()
+        try:
+            return base * UNIT_MULTIPLIER[unit] 
+        except:
+            return None
+
 
 # Create your models here.
 class Hires_H1B(Hires):
@@ -166,12 +174,8 @@ class Hires_H1B(Hires):
                     ] 
                 )
 
-    def get_annual_base_salary(self):
-        # return annualized salary for apple to apple comparison
-        unit = self.get_unit()
-        base = self.get_base_salary()
-        return base * UNIT_MULTIPLIER[unit] 
 
+# NOTE: the default value for null=? is FALSE
 class Hires_Perm(Hires):
     decision_date = models.DateField(null=True) 
     case_number = models.TextField(null=True)
@@ -223,9 +227,20 @@ class Hires_Perm(Hires):
                         (self.employer_city, self.employer_state)
                     ] 
                 )
-    def get_annual_base_salary(self):
-        # return annualized salary for apple to apple comparison
-        unit = self.get_unit()
-        base = self.get_base_salary()
-        return base * UNIT_MULTIPLIER[unit] 
-    
+
+#### REVIEWS #### 
+
+class Hires_H1B_Review(models.Model):
+    hire = models.ForeignKey(Hires_H1B)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+    parent = models.ForeignKey('self',null=True)
+
+class Hires_Perm_Review(models.Model):
+    hire = models.ForeignKey(Hires_Perm)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+    parent = models.ForeignKey('self',null=True)
+
