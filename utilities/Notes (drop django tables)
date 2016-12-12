@@ -11,6 +11,18 @@ drop table IF EXISTS "django_content_type" ;
 drop table IF EXISTS "auth_user" ;
 drop table IF EXISTS "reviews_hire_review" cascade;
 drop table IF EXISTS "reviews_hires_h1b" cascade;
+drop table IF EXISTS "reviews_hires_h2a" cascade;
+drop table IF EXISTS "reviews_hires_h2b" cascade;
 drop table IF EXISTS "reviews_hires_perm" cascade;
-drop table IF EXISTS "reviews_hires_perm_review";
 drop table IF EXISTS "reviews_hires_h1b_review";
+drop table IF EXISTS "reviews_hires_h2a_review";
+drop table IF EXISTS "reviews_hires_h2b_review";
+drop table IF EXISTS "reviews_hires_perm_review";
+
+
+
+DROP INDEX IF EXISTS UIdx_perm;
+DROP INDEX IF EXISTS UIdx_h1b;
+DROP INDEX IF EXISTS UIdx_h2a;
+DROP INDEX IF EXISTS UIdx_h2b;
+

@@ -93,6 +93,8 @@ def update_raw_indv(FILING, YEAR, ID=1):
     df = df.replace({'\r':' '}, regex=True)
     df = df.replace({'\n':' '}, regex=True)
     df = df.replace({'\\\\':' '}, regex=True)
+    df = df.replace({'\$':''}, regex=True)
+    df = df.replace({'^#+$':''}, regex=True)
 
     if ID != 1:
         TABLE_NAME = 'yr{0}_{1}'.format(YR, ID)
@@ -201,6 +203,17 @@ def update_raw_consolidate(FILING, YEAR, ID=1):
     indv_df = pd.read_sql(sql.format(INDV_TABLE_NAME), engine)
     cols = indv_df.set_index('column_name')['data_type'].to_dict()
 
+    # check every raw_column header has a corresponding standardized version in the consolidated
+    #all_mapped = True
+    #for raw_cn in indv_df['column_name']:
+    #    try:
+    #        all_map[raw_cn]
+    #    except:
+    #        print raw_cn
+    #        all_mapped = False
+    #assert(all_mapped)
+
+
     indv_std2raw_map = {} #from std_col to raw_table_header
     for col in cols:
         try:
@@ -214,7 +227,7 @@ def update_raw_consolidate(FILING, YEAR, ID=1):
     wage_to_1_inserted = False
     for x in std_hdrs:
         if x == 'employment_confirmed':
-            each_line.append('case when lower({0}) in (\'certification\', \'certified\') then \'True\' else \'false\' end as {1}'.format(indv_std2raw_map[x], x))
+            each_line.append('case when lower({0}) in (\'certification\', \'certified\', \'certified - full\', \'certified - partial\', \'partial certification\') then \'True\' else \'false\' end as {1}'.format(indv_std2raw_map[x], x))
         elif x == 'table_name':
             each_line.append('\'{0}\' as table_name'.format(INDV_TABLE_NAME))
         elif x in indv_std2raw_map:
@@ -410,8 +423,8 @@ class MyTest(unittest.TestCase):
     #def test_update_raw_indv(self):
     #    update_raw_indv(FILING='H1B', YEAR=9, ID=1)
 
-    def test_update_raw_consolidate(self):
-        update_raw_consolidate(FILING='H1B', YEAR=15, ID=1)
+    #def test_update_raw_consolidate(self):
+    #    update_raw_consolidate(FILING='H2A', YEAR=8, ID=1)
 
     #def test_standardize_address(self):
     #    standardize_address()
@@ -431,8 +444,7 @@ class MyTest(unittest.TestCase):
 
 if __name__ == "__main__":
     #unittest.main()
-    #year_list = [8,10,11,9]
-    year_list = range(8, 17)
+    year_list = range(8, 9)
     for i in year_list:
-        update_fsalary_data(FILING='H1B', YEAR=i)
+        update_fsalary_data(FILING='H2A', YEAR=i)
 

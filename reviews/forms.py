@@ -3,14 +3,13 @@ from haystack.forms import SearchForm
 from collections import defaultdict
 import pdb
 
-# The key here is to use the ModelForm factory function
 class MultiFacetedSearchForm(SearchForm):
     def __init__(self, *args, **kwargs):
         self.selected_facets = kwargs.pop("selected_facets", [])
         super(MultiFacetedSearchForm, self).__init__(*args, **kwargs)
 
     def search(self):
-        sqs = super(MultiFacetedSearchForm, self).search()
+        sqs = super(MultiFacetedSearchForm, self).search().order_by('-start_date_exact')
 
         facet_dict = defaultdict(list)
 

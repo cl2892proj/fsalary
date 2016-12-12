@@ -1,0 +1,8 @@
+{{ object.employer_name }}
+{{ object.get_work_location }}
+{{ object.job_title }}
+{{ object.get_start_date }}
+{{ object.get_base_salary }}
+{{ object.get_annual_base_salary }}
+{{ object.get_unit }}
+{{ object.get_absolute_url }}

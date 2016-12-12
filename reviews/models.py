@@ -175,7 +175,6 @@ class Hires_H1B(Hires):
                 )
 
 
-# NOTE: the default value for null=? is FALSE
 class Hires_Perm(Hires):
     decision_date = models.DateField(null=True) 
     case_number = models.TextField(null=True)
@@ -228,6 +227,115 @@ class Hires_Perm(Hires):
                     ] 
                 )
 
+class Hires_H2A(Hires):
+    decision_date = models.DateField(null=True) 
+    case_number = models.TextField(null=True)
+    work_location_city1 = models.TextField(null=True)
+    work_location_state1 = models.TextField(null=True)
+    employment_start_date = models.DateField(null=True)
+    employment_end_date = models.DateField(null=True)
+    certification_begin_date = models.DateField(null=True)
+    certification_end_date = models.DateField(null=True)
+
+    def get_absolute_url(self):
+        return reverse('reviews:hire_detail',
+                        kwargs={
+                                    'pid':self.pid,
+                                    'source':'H2A',
+                                }
+                        )
+
+    def get_start_date(self):
+        return get_start_date(
+                    [
+                        self.employment_start_date,
+                        self.certification_begin_date,
+                        self.decision_date,
+                    ]
+                )
+
+    def get_base_salary(self):
+        return get_base_salary(
+                    [
+                        self.wage_to_1,
+                        self.wage_from_1,
+                    ]
+                )
+
+    def get_unit(self):
+        return get_unit(
+                    [
+                        self.rate_unit_1,
+                    ] 
+                )
+
+    def get_work_location(self):
+        return get_work_location(
+                    [
+                        (self.work_location_city1, self.work_location_state1),
+                        (self.employer_city, self.employer_state)
+                    ] 
+                )
+
+class Hires_H2B(Hires):
+    decision_date = models.DateField(null=True) 
+    case_number = models.TextField(null=True)
+    work_location_city1 = models.TextField(null=True)
+    work_location_state1 = models.TextField(null=True)
+    certification_begin_date = models.DateField(null=True)
+    certification_end_date = models.DateField(null=True)
+    overtime_rate_from = models.FloatField(null=True)
+    overtime_rate_to = models.FloatField(null=True)
+    pw_1 = models.FloatField(null=True)
+    pw_unit_1 = models.TextField(null=True)
+    employment_start_date = models.DateField(null=True)
+    employment_end_date = models.DateField(null=True)
+    job_info_education  = models.TextField(null=True)
+    job_info_major  = models.TextField(null=True)
+    job_info_other_education  = models.TextField(null=True)
+    job_info_second_major  = models.TextField(null=True)
+
+    def get_absolute_url(self):
+        return reverse('reviews:hire_detail',
+                        kwargs={
+                                    'pid':self.pid,
+                                    'source':'H2B',
+                                }
+                        )
+
+    def get_start_date(self):
+        return get_start_date(
+                    [
+                        self.employment_start_date,
+                        self.certification_begin_date,
+                        self.decision_date,
+                    ]
+                )
+
+    def get_base_salary(self):
+        return get_base_salary(
+                    [
+                        self.wage_to_1,
+                        self.wage_from_1,
+                        self.pw_1,
+                    ]
+                )
+
+    def get_unit(self):
+        return get_unit(
+                    [
+                        self.rate_unit_1,
+                        self.pw_unit_1,
+                    ] 
+                )
+
+    def get_work_location(self):
+        return get_work_location(
+                    [
+                        (self.work_location_city1, self.work_location_state1),
+                    ] 
+                )
+
 #### REVIEWS #### 
 
 class Hires_H1B_Review(models.Model):
@@ -239,6 +347,20 @@ class Hires_H1B_Review(models.Model):
 
 class Hires_Perm_Review(models.Model):
     hire = models.ForeignKey(Hires_Perm)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+    parent = models.ForeignKey('self',null=True)
+
+class Hires_H2A_Review(models.Model):
+    hire = models.ForeignKey(Hires_H2A)
+    pub_date = models.DateTimeField('date published')
+    user_name = models.CharField(max_length=30)
+    comment = models.CharField(max_length=1000)
+    parent = models.ForeignKey('self',null=True)
+
+class Hires_H2B_Review(models.Model):
+    hire = models.ForeignKey(Hires_H2B)
     pub_date = models.DateTimeField('date published')
     user_name = models.CharField(max_length=30)
     comment = models.CharField(max_length=1000)

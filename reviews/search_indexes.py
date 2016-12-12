@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes
-from .models import Hires_Perm, Hires_H1B
+from .models import *
 
 class Hires_Index(indexes.SearchIndex):
     employment_confirmed = indexes.BooleanField(model_attr='employment_confirmed',faceted=True) 
@@ -40,3 +40,13 @@ class Hires_H1B_Index(Hires_Index, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     def get_model(self):
         return Hires_H1B
+
+class Hires_H2A_Index(Hires_Index, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    def get_model(self):
+        return Hires_H2A
+
+class Hires_H2B_Index(Hires_Index, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    def get_model(self):
+        return Hires_H2B

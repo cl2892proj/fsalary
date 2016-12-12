@@ -228,6 +228,7 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 BOWER_INSTALLED_APPS = (
     'd3#3.5.16',
     'nvd3#1.8.1',
+    'moment#2.17.0',
 )
 
 

@@ -33,22 +33,27 @@
                 <td>{{ hire.employment_start_date }}</td>
             </tr>
             <tr>
-                <td>Work Location City</td>
-                <td>{{ hire.work_location_city1 }}</td>
-            </tr>
-            <tr>
-                <td>Work Location State</td>
-                <td>{{ hire.work_location_state1 }}</td>
-            </tr>
-            <tr>
-                <td>Wage Range Low</td>
+                <td>Base Wage Range Low</td>
                 <td>{{ hire.wage_from_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
 
             <tr>
-                <td>Wage Range High</td>
+                <td>Base Wage Range High</td>
                 <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
+
+            {% if hire.source == "H1B" %}
+                {% include "reviews/h1b_detail.html" %}
+            {% elif hire.source == "PERM" %}
+                {% include "reviews/perm_detail.html" %}
+            {% elif hire.source == "H2A" %}
+                {% include "reviews/h2a_detail.html" %}
+            {% elif hire.source == "H2B" %}
+                {% include "reviews/h2b_detail.html" %}
+            {% else %}
+
+            {% endif %}
+
         </table>
 
 
@@ -65,9 +70,10 @@
         {% else %}
             <p>No review for this hiring yet</p>
         {% endif %}
+       
 
         <h4>Add your review</h4>
-        <form action="{% url 'reviews:add_review' source=hire.source employer_name=hire.employer job_title=hire.job_title job_date=hire.employment_start_date|date:"Y-m-d" salary=hire.wage_from_1 %}" method="post" class="form">
+        <form action="{% url 'reviews:add_review' source=hire.source pid=hire.pid %}" method="post" class="form">
             {% csrf_token %}
              <div class="form-group">
                 {{ form.comment }}

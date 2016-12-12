@@ -10,7 +10,8 @@ import datetime
 import time
 import pdb
 from django.utils import timezone
-from .models import Hires_Perm, Hires_H1B, Hires_H1B_Review, Hires_Perm_Review
+from .models import * 
+from django.forms import Textarea
 
 
 #ModelForm Factory Function
@@ -25,6 +26,56 @@ from django.shortcuts import render_to_response
 from haystack.generic_views import FacetedSearchView
 #haystack end
 
+def modelBySource(source, group):
+    #both inputs are strings
+    if group == 'REVIEW':
+        if source == 'H1B':
+            model = Hires_H1B_Review
+        elif source == 'PERM':
+            model = Hires_Perm_Review
+        elif source == 'H2A':
+            model = Hires_H2A_Review
+        elif source == 'H2B':
+            model = Hires_H2B_Review
+        else:
+            print '##### ERROR #####'
+            print source + ' is an unexpected source'
+            print '##### ERROR #####'
+    elif group == 'HIRE':
+        if source == 'H1B':
+            model = Hires_H1B
+        elif source == 'PERM':
+            model = Hires_Perm
+        elif source == 'H2A':
+            model = Hires_H2A
+        elif source == 'H2B':
+            model = Hires_H2B
+        else:
+            print '##### ERROR #####'
+            print source + ' is an unexpected source'
+            print '##### ERROR #####'
+    else:
+        print "incorrect group"
+    return model
+
+def reviewFormFactory(source):
+    model = modelBySource(source,'REVIEW')
+
+    # The key here is to use the ModelForm factory function
+    ReviewForm = modelform_factory( 
+            model,
+            fields = ['comment',], 
+            widgets = {
+                'comment': Textarea(attrs={ 'cols':40, 
+                                            'rows':5,
+                                            'maxlength':400, 
+                                            'class':"form-control",
+                                            'placeholder':'comment',
+                                            
+                                            })} 
+            )
+    return ReviewForm
+
 
 def min_date(date_list):
     try:
@@ -34,22 +85,12 @@ def min_date(date_list):
 
 def hire_detail(request, pid, source):
     data_source = source
-    if source == 'H1B':
-        job = get_object_or_404(Hires_H1B, pid = pid )
-        review_list = Hires_H1B_Review.objects.filter(h1b=job)
-        model = Hires_H1B
-    elif source == 'PERM':
-        job = get_object_or_404(Hires_Perm, pid = pid )
-        review_list = Hires_Perm_Review.objects.filter(perm=job)
-        model = Hires_Perm
-    else:
-        print '##### ERROR #####'
-        print source + ' is an unexpected source'
-        print '##### ERROR #####'
-
+    job = get_object_or_404(modelBySource(source,'HIRE'), pid = pid )
+    review_list = modelBySource(source,'REVIEW').objects.filter(hire=job)
 
     hire = {
                 'source':data_source,
+                'pid':pid,
                 'job_title':job.job_title,
                 'employer':job.employer_name, 
                 'employer_address1':job.employer_address1, 
@@ -68,26 +109,7 @@ def hire_detail(request, pid, source):
 
             }
 
-
-    review_list = Hire_Review.objects.filter(
-                employer_name = job.employer_name,
-                job_title = job.job_title,
-                salary = job.get_base_salary(),
-                job_date = job.get_start_date(),
-            )
-   
-    ReviewForm = modelform_factory( 
-            model,
-            fields = ['comment',], 
-            widgets = {
-                'comment': Textarea(attrs={ 'cols':40, 
-                                            'rows':5,
-                                            'maxlength':400, 
-                                            'class':"form-control",
-                                            'placeholder':'comment',
-                                            
-                                            })} 
-            )
+    ReviewForm = reviewFormFactory(source)
 
     context = {'hire':hire, 'review_list':review_list, 'form':ReviewForm()}
     return render(request, 'reviews/hiring_detail.html', context)
@@ -98,12 +120,13 @@ def add_review(request, source, pid):
     print '-----------'
     print source
     
-    hire = get_object_or_404(get_class_by_name(source), pid=pid)
+    hire = get_object_or_404(modelBySource(source,'HIRE'), pid = pid )
 
+    ReviewForm = reviewFormFactory(source)
     form = ReviewForm(request.POST)
 
     if form.is_valid():
-        review = Hire_Review()
+        review = modelBySource(source,'REVIEW')()
         review.hire = hire
         review.pub_date = timezone.now()
         review.user_name = request.user.username 
