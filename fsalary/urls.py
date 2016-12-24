@@ -16,21 +16,21 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from reviews.views import MyFacetedSearchView, filter_results
-
-
-#haystack begin
-#from haystack.forms import FacetedSearchForm
-#from haystack.views import FacetedSearchView
-#haystack end
+import django.contrib.auth.views as auth_view 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
-    url(r'^accounts/',include('registration.backends.simple.urls')),
-    url(r'^accounts/',include('django.contrib.auth.urls',namespace='auth')),
+
+    #comments
+    url(r'^comments/', include('django_comments.urls')),
 
     #haystack search
     url(r'^$', MyFacetedSearchView.as_view(), name="haystack_search"),
     url(r'^filter/', filter_results, name='filter_results'),
+
+    #django allauth
+    url(r'^accounts/logout/$', auth_view.logout, name = 'auth_logout', kwargs={'next_page':'/'}),
+    url(r'^accounts/', include('allauth.urls')),
 ]
 

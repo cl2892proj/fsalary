@@ -336,33 +336,3 @@ class Hires_H2B(Hires):
                     ] 
                 )
 
-#### REVIEWS #### 
-
-class Hires_H1B_Review(models.Model):
-    hire = models.ForeignKey(Hires_H1B)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self',null=True)
-
-class Hires_Perm_Review(models.Model):
-    hire = models.ForeignKey(Hires_Perm)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self',null=True)
-
-class Hires_H2A_Review(models.Model):
-    hire = models.ForeignKey(Hires_H2A)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self',null=True)
-
-class Hires_H2B_Review(models.Model):
-    hire = models.ForeignKey(Hires_H2B)
-    pub_date = models.DateTimeField('date published')
-    user_name = models.CharField(max_length=30)
-    comment = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self',null=True)
-

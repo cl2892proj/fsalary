@@ -2,6 +2,7 @@
 fsalary/private_settings.py
 components/*
 static/*
+!static/fsalary/*
 *.swp
 */insert_app_data/excel/*
 *.log

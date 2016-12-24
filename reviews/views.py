@@ -85,33 +85,9 @@ def min_date(date_list):
 
 def hire_detail(request, pid, source):
     data_source = source
-    job = get_object_or_404(modelBySource(source,'HIRE'), pid = pid )
-    review_list = modelBySource(source,'REVIEW').objects.filter(hire=job)
+    hire = get_object_or_404(modelBySource(source,'HIRE'), pid = pid )
 
-    hire = {
-                'source':data_source,
-                'pid':pid,
-                'job_title':job.job_title,
-                'employer':job.employer_name, 
-                'employer_address1':job.employer_address1, 
-                'employer_address2':job.employer_address2, 
-                'employer_city':job.employer_city,
-                'employer_state':job.employer_state,
-                'employer_postal_code':job.employer_postal_code,
-                'wage_from_1':job.wage_from_1 ,
-                'wage_to_1':job.wage_to_1 ,
-                'rate_unit_1':job.get_unit() ,
-                'annualized_rate': job.get_annual_base_salary(),
-
-                'employment_start_date':job.get_start_date(),
-                'work_location_city1':job.work_location_city1,
-                'work_location_state1':job.work_location_state1, 
-
-            }
-
-    ReviewForm = reviewFormFactory(source)
-
-    context = {'hire':hire, 'review_list':review_list, 'form':ReviewForm()}
+    context = {'source':data_source, 'pid':pid, 'hire':hire} 
     return render(request, 'reviews/hiring_detail.html', context)
 
 #@login_required
@@ -137,13 +113,6 @@ def add_review(request, source, pid):
     # with POST data. This prevents data from being posted twice if a
     # user hits the Back button.
     return HttpResponseRedirect(reverse('reviews:hire_detail', args=(source, pid)))
-
-def user_review_list(request, username=None):
-    if not username:
-        username = request.user.username
-    latest_review_list = Review.objects.filter(user_name=username).order_by('-pub-date')
-    context = {'latest_review_list':latest_review_list, 'username':username}
-    return render(request, 'review/user_review_list.html', context)
 
 def filter_results(request):
     if request.method == 'GET':

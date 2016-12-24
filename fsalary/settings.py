@@ -24,7 +24,7 @@ from private_settings import *
 import elasticsearch
 from requests_aws4auth import AWS4Auth
 
-awsauth = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
+awsauth_es = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
 
 ########################################
 # Haystack Settings BEGIN
@@ -38,7 +38,7 @@ HAYSTACK_CONNECTIONS = {
         'INCLUDE_SPELLING': True,
         'KWARGS':{
             'port':443,
-            'http_auth':awsauth,
+            'http_auth':awsauth_es,
             'use_ssl':True,
             'verify_certs':True,
             'connection_class':elasticsearch.RequestsHttpConnection,
@@ -80,13 +80,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','0.0.0.0','127.0.0.1']
 
-#registration-redux
-ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
-REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -95,7 +89,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'registration',
     'reviews',
     'elasticsearch',
     'django_nvd3',
@@ -103,9 +96,8 @@ INSTALLED_APPS = [
     'bootstrap3',
 
     #comments:
-    #'django.contrib.comments',
-    #'mptt',
-    #'comments',
+    'django.contrib.sites',
+    'django_comments',
 
     #django debug toolbar
     'debug_toolbar',
@@ -114,9 +106,18 @@ INSTALLED_APPS = [
     'haystack',
     'django_rq',
     'haystack_rqueue',
+
+    #django_allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # ... include the providers you want to enable:
+    #'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.facebook',
 ]
 
-#COMMENTS_APP = 'comments'
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -149,6 +150,16 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+)
 
 WSGI_APPLICATION = 'fsalary.wsgi.application'
 
@@ -202,14 +213,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
+#http://blog.xjtian.com/post/52685286308/serving-static-files-in-django-more-complicated
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') #production
 
-#STATIC_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),) #devlopement
 
 
+# auth and allauth settings
+LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_QUERY_EMAIL = True
 
 
 # Django-bower
