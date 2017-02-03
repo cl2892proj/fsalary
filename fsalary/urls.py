@@ -19,6 +19,7 @@ from reviews.views import MyFacetedSearchView, filter_results
 import django.contrib.auth.views as auth_view 
 
 urlpatterns = [
+    
     url(r'^admin/', admin.site.urls),
     url(r'^reviews/', include('reviews.urls', namespace='reviews')),
 
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^filter/', filter_results, name='filter_results'),
 
     #django allauth
+    #add the following line to skip the logout confirmation step
     url(r'^accounts/logout/$', auth_view.logout, name = 'auth_logout', kwargs={'next_page':'/'}),
     url(r'^accounts/', include('allauth.urls')),
 ]

@@ -1,34 +1,33 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% load comments %}
 
 
 {% block content %}
-    <div class="container contentContainer">
-        <h4>{{ hire.employer }}</h4>
-        <h4>{{ hire.job_title }}</h4>
+<div class="container contentContainer">
+    <h4>{{ hire.employer }}</h4>
+    <h4>{{ hire.job_title }}</h4>
 
 
-        <table class="table">
-            <tr>
-                <td>Employer Address Street</td>
-                <td>{{ hire.employer_address1 }} {{ hire.employer_address2 }}</td>
-            </tr>
-            <tr>
-                <td>Employer Address City</td>
-                <td>{{ hire.employer_city }}</td>
-            </tr>
-            <tr>
-                <td>Employer Address State</td>
-                <td>{{ hire.employer_state }}</td>
-            </tr>
-            <tr>
-                <td>Employer Address Zipcode</td>
-                <td>{{ hire.employer_zipcode }}</td>
-            </tr>
-            <tr>
-                <td>Salary Annualized</td>
-                <td>{{ hire.annualized_rate|floatformat:"0"|intcomma }}</td>
+    <table class="table">
+        <tr>
+            <td>Employer Address Street</td>
+            <td>{{ hire.employer_address1 }} {{ hire.employer_address2 }}</td>
+        </tr>
+        <tr>
+            <td>Employer Address City</td>
+            <td>{{ hire.employer_city }}</td>
+        </tr>
+        <tr>
+            <td>Employer Address State</td>
+            <td>{{ hire.employer_state }}</td>
+        </tr>
+        <tr>
+            <td>Employer Address Zipcode</td>
+            <td>{{ hire.employer_zipcode }}</td>
+        </tr>
+        <tr>
+            <td>Salary Annualized</td>
+            <td>{{ hire.annualized_rate|floatformat:"0"|intcomma }}</td>
             <tr>
                 <td>Employment Start Date</td>
                 <td>{{ hire.employment_start_date }}</td>
@@ -43,29 +42,47 @@
                 <td>{{ hire.wage_to_1|floatformat:"0"|intcomma }} / {{ hire.rate_unit_1 }}</td>
             </tr>
 
-            {% if hire.source == "H1B" %}
-                {% include "reviews/h1b_detail.html" %}
-            {% elif hire.source == "PERM" %}
-                {% include "reviews/perm_detail.html" %}
-            {% elif hire.source == "H2A" %}
-                {% include "reviews/h2a_detail.html" %}
-            {% elif hire.source == "H2B" %}
-                {% include "reviews/h2b_detail.html" %}
+            {% if source == "H1B" %}
+            {% include "reviews/h1b_detail.html" %}
+            {% elif source == "PERM" %}
+            {% include "reviews/perm_detail.html" %}
+            {% elif source == "H2A" %}
+            {% include "reviews/h2a_detail.html" %}
+            {% elif source == "H2B" %}
+            {% include "reviews/h2b_detail.html" %}
             {% else %}
 
             {% endif %}
 
-        </table>
+    </table>
 
-        <p>
-            <strong> Number of comments: </strong>
-            {% get_comment_count for hire as comment_count %} {{ comment_count }}
-        </p>        
+    {% with hire as object %}{% include "_comments.html" %}{% endwith %}
 
-        {% render_comment_list for hire %}
+{% comment %}
+    <h4>Add your review</h4>
+    {% if user.is_authenticated %}
+        {% get_comment_form for hire as form %}
+        <form action="{% comment_form_target %}" method="POST">
+            {% csrf_token %}
+            {{ form.comment }}
+            {{ form.honeypot }}
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            {{ form.title }}
+            <input type="hidden" name="next" value="{%url 'reviews:hire_detail' source=source pid=hire.pid %}">
+            <input type="submit" name="submit" value="Add comment">
+        </form>
+    {% else %}
+        <p>Please <a href="{% url 'account_login' %}">log in</a> to leave a comment.</p>
+    {% endif %}
+{% endcomment %}
 
-        <h4>Add your review</h4>
-        {% render_comment_form for hire %}
-    </div>
+
+{% comment %}
+{% render_comment_form for hire %}
+{% endcomment %}
+</div>
 
 {% endblock %}

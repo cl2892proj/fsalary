@@ -2,183 +2,185 @@
 {% load humanize %}
 {% load nvd3_tags %}
 {% load custom_filter %}
+{% load static %}
+
 {% block search_block %}
 
 <!--charting -->
+{% comment %}
+{% include_chart_jscss %}
+{% load_chart charttype chartdata chartcontainer d3_extra %}
+{% endcomment %}
 
-{#{% include_chart_jscss %}#}
-{#{% load_chart charttype chartdata chartcontainer d3_extra %}#}
+{% if query %}
 
-    {% if query %}
-    <div style="padding-left: 10px; padding-right: 10px;" class="container">
-        <!--start left panel-->
-        <div class="col-xs-12 col-sm-3">
-            <button type="button" class="btn btn-primary btn-block" onclick="sendFacetURL()">filter</button>
+<div class="container">
+    <!--start left sidebar-->
+    <div class="col-xs-12 col-sm-3" id="sidebar-wrapper">
 
-            <!-- Begin Faceting -->
-            {% for key_field, vals in facets.fields.items %}
-                <h4>{{ key_field|title_facet }}</h4>
-                <div>
-                    {% if key_field in facet_date_fields %}
-                        {% for one_item in vals|slice:":5" %}
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0|secToDate }} ({{ one_item.1 }})</label>
-                            </div>
-                        {% endfor %}
+        <button type="button" class="btn btn-primary btn-block" onclick="sendFacetURL()">filter</button>
+
+        <!-- Begin Faceting -->
+        {% for key_field, vals in facets.fields.items %}
+        <h4>{{ key_field|title_facet }}</h4>
+        <div>
+            {% if key_field in facet_date_fields %}
+            {% for one_item in vals|slice:":5" %}
+            <div class="checkbox">
+                <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0|secToDate }} ({{ one_item.1 }})</label>
+            </div>
+            {% endfor %}
+            {% else %}
+            {% for one_item in vals|slice:":5" %}
+            <div class="checkbox">
+                <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0 }} ({{ one_item.1 }})</label>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <!-- date range for start date faceting -->
+        <div class="input-group input-daterange">
+            <input type="text" class="form-control datepicker">
+            <span class="input-group-addon">to</span>
+            <input type="text" class="form-control datepicker">
+        </div>
+
+        <!-- End Faceting --> 
+    </div>
+    <!--end left sidebar-->
+
+    <!--start main panel-->
+    <div class="col-xs-12 col-sm-9">
+        <div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Detail View</a></li>
+                <li role="presentation"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graphic View</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!--detail pane start-->
+                <div role="tabpanel" class="tab-pane active" id="detail">
+                    {% if query %}
+                    <h3>{{ page_obj.paginator.count }} Results</h3>
+                    <nav>
+                        <ul class="pagination">
+                            <!-- previous page  -->
+                            <li {% if not page_obj.has_previous %}class="disabled"{% endif %}>
+                                <a href={% if not page_obj.has_previous %}"#"
+                            {% else %}
+                            "{{ request.get_full_path }}&page={{ page_obj.previous_page_number }}"
+                            {% endif %}>
+                                    <span>&laquo; Previous Page</span>
+                                </a> 
+                            </li>
+
+                            <!-- page 1 -->
+                            <li {% if page_obj.number == 1 %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page=1">1</a></li>
+
+                            <!-- first ... -->
+                            {% if first_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
+
+                            <!-- middle pages -->
+                            {% for i in pages_visible %}
+                            <li {% if page_obj.number == i %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ i }}">{{ i }}</a></li>
+                            {% endfor %}
+
+                            <!-- second ... -->
+                            {% if last_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
+
+                            <!-- last page -->
+                            {% if page_obj.paginator.num_pages > 1 %}
+                            <li {% if page_obj.number == page_obj.paginator.num_pages %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
+                            {% endif %}
+
+
+                            <!-- next page -->
+                            <li {% if not page_obj.has_next %}class="disabled"{% endif %}>
+                                <a href={% if not page_obj.has_next %}"#"
+                                                                                                                      {% else %}
+                                                                                                                      "{{ request.get_full_path }}&page={{ page_obj.next_page_number }}"
+                                                                                                                      {% endif %}>
+                                    <span>Next page &raquo;</span>
+                                </a> 
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Employer</th>
+                                <th>Job Title</th>
+                                <th>Base Salary</th>
+                                <th>Work Location</th>
+                                <th>Start Date</th>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td>{{ result.employer_name }}</td>
+                                <td>{{ result.job_title }}</td>
+                                <td>{{ result.base_salary|floatformat:"0"|intcomma }} / {{ result.unit }}</td>
+                                <td>{{ result.work_location }}</td>
+                                <td>{{ result.start_date|date:"m/d/Y" }}</td>
+                                <td><a href={{ result.url }}>Detail</a></td>
+                            </tr>
+                            {% empty %}
+                            <p>No results found.</p>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
                     {% else %}
-                        {% for one_item in vals|slice:":5" %}
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="{{ key_field }}[]" value="{{ one_item.0 }}">{{ one_item.0 }} ({{ one_item.1 }})</label>
-                            </div>
-                        {% endfor %}
+                    {# Show some example queries to run, maybe query syntax, something else? #}
                     {% endif %}
                 </div>
-            {% endfor %}
-            
-            <!-- date range for start date faceting -->
-            <div class="input-group input-daterange">
-                <input type="text" class="form-control" value="2012-04-05">
-                <span class="input-group-addon">to</span>
-                <input type="text" class="form-control" value="2017-01-01">
-            </div>
+                <!--detail pane ends-->
 
-            <!-- End Faceting --> 
-        </div>
-        <!--end left panel-->
-
-        <!--start main panel-->
-        <div class="col-xs-12 col-sm-9">
-            <div>
-
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Detail View</a></li>
-                    <li role="presentation"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graphic View</a></li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <!--detail pane start-->
-                    <div role="tabpanel" class="tab-pane active" id="detail">
-                        {% if query %}
-                            <h3>{{ page_obj.paginator.count }} Results</h3>
-                            <nav>
-                                <ul class="pagination">
-                                    <!-- previous page  -->
-                                    <li {% if not page_obj.has_previous %}class="disabled"{% endif %}>
-                                        <a href={% if not page_obj.has_previous %}"#"
-                                                {% else %}
-                                                    "{{ request.get_full_path }}&page={{ page_obj.previous_page_number }}"
-                                                {% endif %}>
-                                            <span>&laquo; Previous Page</span>
-                                        </a> 
-                                    </li>
-
-                                    <!-- page 1 -->
-                                    <li {% if page_obj.number == 1 %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page=1">1</a></li>
-
-                                    <!-- first ... -->
-                                    {% if first_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
-
-                                        <!-- middle pages -->
-                                        {% for i in pages_visible %}
-                                        <li {% if page_obj.number == i %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ i }}">{{ i }}</a></li>
-                                        {% endfor %}
-
-                                        <!-- second ... -->
-                                        {% if last_dotdotdot %}<li class="disabled"><a href="#">...</a></li>{% endif %}
-
-                                        <!-- last page -->
-                                        {% if page_obj.paginator.num_pages > 1 %}
-                                        <li {% if page_obj.number == page_obj.paginator.num_pages %}class="active" {% endif %}><a href="{{ request.get_full_path }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
-                                        {% endif %}
-
-
-                                        <!-- next page -->
-                                        <li {% if not page_obj.has_next %}class="disabled"{% endif %}>
-                                            <a href={% if not page_obj.has_next %}"#"
-                                                    {% else %}
-                                                        "{{ request.get_full_path }}&page={{ page_obj.next_page_number }}"
-                                                    {% endif %}>
-                                                <span>Next page &raquo;</span>
-                                            </a> 
-                                        </li>
-                                    </ul>
-                                </nav>
-
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Employer</th>
-                                            <th>Job Title</th>
-                                            <th>Base Salary</th>
-                                            <th>Work Location</th>
-                                            <th>Start Date</th>
-                                    </thead>
-                                    <tbody>
-                                    {% for result in results %}
-                                        <tr>
-                                            <td>{{ result.employer_name }}</td>
-                                            <td>{{ result.job_title }}</td>
-                                            <td>{{ result.base_salary|floatformat:"0"|intcomma }} / {{ result.unit }}</td>
-                                            <td>{{ result.work_location }}</td>
-                                            <td>{{ result.start_date|date:"m/d/Y" }}</td>
-                                            <td><a href={{ result.url }}>Detail</a></td>
-                                        </tr>
-                                    {% empty %}
-                                        <p>No results found.</p>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-
-                            {% else %}
-                                {# Show some example queries to run, maybe query syntax, something else? #}
-                            {% endif %}
-                        </div>
-                        <!--detail pane ends-->
-
-                        <div role="tabpanel" class="tab-pane" id="graph">
-                            {% include_container chartcontainer 400 850 %}
-                        </div>
-                    </div>
-
+                <div role="tabpanel" class="tab-pane" id="graph">
+                    {% include_container chartcontainer 400 850 %}
                 </div>
-
-
-
             </div>
-            <!--end main panel-->
+
         </div>
-    {% endif %}
+    </div>
+    <!--end main panel-->
+</div>
+{% endif %}
 
-    <script>
-        function sendFacetURL(){
+<script>    
+function sendFacetURL(){
+    var facet_arr= {{ facet_fields | safe }} ;
+    //var facet_arr=["employer_name","employer_address1"];
+    var curURL = "{{ request.get_full_path }}";
+    var arr = curURL.split("&amp;");
 
-            var facet_arr= {{ facet_fields | safe }} ;
-            //var facet_arr=["employer_name","employer_address1"];
-            var curURL = "{{ request.get_full_path }}";
-            var arr = curURL.split("&amp;");
-            
-            var res = ""
-            var facet_set = new Set();
-            for(var i in arr){
-                if(arr[i].indexOf("page=")==-1){
-                    if (res == "") res = arr[i]
-                    else res = res+"&"+arr[i];
-                    facet_set.add(arr[i]);
-                } 
+    var res = ""
+        var facet_set = new Set();
+    for(var i in arr){
+        if(arr[i].indexOf("page=")==-1){
+            if (res == "") res = arr[i]
+            else res = res+"&"+arr[i];
+            facet_set.add(arr[i]);
+        } 
+    }
+
+    for(var i=0; i<facet_arr.length; i++){
+        var facet_boxes=document.getElementsByName(facet_arr[i]+"[]");
+        for(var j=0; j<facet_boxes.length; j++){
+            if(facet_boxes[j].checked){
+                var str ="selected_facets="+facet_arr[i]+"_exact:"+encodeURIComponent(facet_boxes[j].value); 
+                if(!facet_set.has(str)) res=res+"&"+str;
             }
-
-            for(var i=0; i<facet_arr.length; i++){
-                var facet_boxes=document.getElementsByName(facet_arr[i]+"[]");
-                for(var j=0; j<facet_boxes.length; j++){
-                    if(facet_boxes[j].checked){
-                        var str ="selected_facets="+facet_arr[i]+"_exact:"+encodeURIComponent(facet_boxes[j].value); 
-                        if(!facet_set.has(str)) res=res+"&"+str;
-                    }
-                }
-            }
-            window.location=res;
         }
-    </script>
-{% endblock %}
+    }
+    window.location=res;
+}
+</script>    
+
+        {% endblock %}

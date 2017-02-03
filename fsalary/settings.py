@@ -20,6 +20,10 @@ if sys.getdefaultencoding() != defaultencoding:
     sys.setdefaultencoding(defaultencoding)
 # END handle the unicode problem
 
+# BEGIN 3rd party apps settings
+from allauth_settings import *
+# END 3rd party apps settings
+
 from private_settings import *
 import elasticsearch
 from requests_aws4auth import AWS4Auth
@@ -78,6 +82,9 @@ SECRET_KEY = FRANKSALARY_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
 ALLOWED_HOSTS = ['localhost','0.0.0.0','127.0.0.1']
 
 # Application definition
@@ -97,7 +104,9 @@ INSTALLED_APPS = [
 
     #comments:
     'django.contrib.sites',
+    'mptt',
     'django_comments',
+    'my_comment_app',
 
     #django debug toolbar
     'debug_toolbar',
@@ -118,6 +127,8 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
+
+COMMENTS_APP = 'my_comment_app'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -162,7 +173,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 WSGI_APPLICATION = 'fsalary.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -217,9 +227,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static') #production
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') #production folder
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),) #devlopement
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'my_assets'),) #collect files
 
 
 # auth and allauth settings
@@ -232,6 +242,7 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',       
+    'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
 BOWER_PATH = '/usr/local/bin/bower'
@@ -241,6 +252,8 @@ BOWER_PATH = '/usr/local/bin/bower'
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
+    'jquery#1.11',
+    'jquery-ui',
     'd3#3.5.16',
     'nvd3#1.8.1',
     'moment#2.17.0',

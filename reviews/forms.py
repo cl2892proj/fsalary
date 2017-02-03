@@ -3,6 +3,7 @@ from haystack.forms import SearchForm
 from collections import defaultdict
 import pdb
 
+
 class MultiFacetedSearchForm(SearchForm):
     def __init__(self, *args, **kwargs):
         self.selected_facets = kwargs.pop("selected_facets", [])

@@ -1,24 +1,30 @@
-drop table IF EXISTS "django_migrations"; 
-drop table IF EXISTS "django_session"; 
-drop table IF EXISTS "auth_group_permissions";
-drop table IF EXISTS "auth_user_groups" ;
-drop table IF EXISTS "auth_user_user_permissions" ;
-drop table IF EXISTS "auth_permission" ;
-drop table IF EXISTS "django_admin_log" ;
-drop table IF EXISTS "auth_group" ;
-drop table IF EXISTS "registration_registrationprofile" ;
-drop table IF EXISTS "django_content_type" ;
-drop table IF EXISTS "auth_user" ;
+drop table IF EXISTS "django_migrations" cascade; 
+drop table IF EXISTS "django_session" cascade; 
+drop table IF EXISTS "auth_group_permissions" cascade;
+drop table IF EXISTS "auth_user_groups" cascade ;
+drop table IF EXISTS "auth_user_user_permissions" cascade ;
+drop table IF EXISTS "auth_permission" cascade ;
+drop table IF EXISTS "django_admin_log" cascade ;
+drop table IF EXISTS "auth_group" cascade ;
+drop table IF EXISTS "registration_registrationprofile"  cascade;
+drop table IF EXISTS "django_content_type"  cascade;
+drop table IF EXISTS "auth_user"  cascade;
 drop table IF EXISTS "reviews_hire_review" cascade;
 drop table IF EXISTS "reviews_hires_h1b" cascade;
 drop table IF EXISTS "reviews_hires_h2a" cascade;
 drop table IF EXISTS "reviews_hires_h2b" cascade;
 drop table IF EXISTS "reviews_hires_perm" cascade;
-drop table IF EXISTS "reviews_hires_h1b_review";
-drop table IF EXISTS "reviews_hires_h2a_review";
-drop table IF EXISTS "reviews_hires_h2b_review";
-drop table IF EXISTS "reviews_hires_perm_review";
-
+drop table IF EXISTS "reviews_hires_h1b_review" cascade;
+drop table IF EXISTS "reviews_hires_h2a_review" cascade;
+drop table IF EXISTS "reviews_hires_h2b_review" cascade;
+drop table IF EXISTS "reviews_hires_perm_review" cascade;
+drop table IF EXISTS "account_emailaddress" cascade;
+drop table IF EXISTS "account_emailconfirmation" cascade;
+drop table IF EXISTS "django_site" cascade;
+drop table IF EXISTS "socialaccount_socialaccount" cascade;
+drop table IF EXISTS "socialaccount_socialapp" cascade;
+drop table IF EXISTS "socialaccount_socialapp_sites" cascade;
+drop table IF EXISTS "socialaccount_socialtoken" cascade;
 
 
 DROP INDEX IF EXISTS UIdx_perm;

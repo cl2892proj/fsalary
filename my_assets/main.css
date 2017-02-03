@@ -1,0 +1,108 @@
+@font-face {
+    font-family: TheanoDidot_Regular;
+    src: TheanoDidot-Regular.ttf;
+}
+
+body {
+    padding-top:70px; 
+    background: #FFF;
+    color: #242729;
+}
+
+.navbar {
+    font-family: TheanoDidot_Regular;
+}
+
+/*
+ *http://www.kodingmadesimple.com/2016/02/change-bootstrap-navbar-color-text-hover-color.html
+ */
+
+/* styling the navbar */
+
+.navbar-default {
+    color: #242729;
+    background: #FFF;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #242729;
+    background: #FFF;
+}
+
+.navbar-default .navbar-nav > li > a ,
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-text {
+    color: #242729;
+    background: #FFF;
+}
+
+#main-search-form button[type="submit"]:hover, 
+#main-search-form button[type="reset"]:hover, 
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li > ul > li > a:hover,
+.navbar-default .navbar-nav > li > ul > li > a:focus,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #FFF;
+    background: #242729;
+}
+
+.navbar-default > div {
+    position: relative; 
+} 
+
+#main-search-form {
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+
+    padding: 0px;
+    margin: 0px;
+
+    width: 100%;
+
+    display: none; 
+}
+
+
+#main-search-form button,
+#main-search-form input {
+    border-radius: 0px;
+    border-width: 0px;
+    box-shadow: none;
+    outline: none; 
+    height: 50px; 
+}
+
+#main-search-form button {
+    width: 44px;
+}
+
+#main-search-form input {
+    font-size: 150%;
+}
+
+
+#main-search-form.active {
+    display: table-cell;
+    opacity: 1;
+}
+
+/* end of styling the navbar */
+
+.subtitle {
+    font-size: 1.28571em;
+    line-height: 1.2;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.title {
+    margin: 0px auto 20px auto;
+    text-align: center;
+}
+

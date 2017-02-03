@@ -1,0 +1,15 @@
+
+.block-box {
+    padding: 20px;
+    margin: 0px auto 20px auto;
+    width: 300px;
+    border: 1px solid #ccc;
+}
+
+p input:not([type="checkbox"]) {
+    width: 100%;
+}
+
+p label:not([for="id_remember"]) {
+    width: 100%;
+}
