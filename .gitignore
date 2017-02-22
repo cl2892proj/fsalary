@@ -1,8 +1,9 @@
 *.pyc
-*/private_settings.py
+*private_settings.py
 components/*
 static/*
 !static/fsalary/*
 *.swp
+*.swo
 */insert_app_data/excel/*
 *.log
