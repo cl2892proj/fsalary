@@ -1,3 +1,4 @@
+from django import forms
 from django.forms import ModelForm, Textarea
 from haystack.forms import SearchForm
 from collections import defaultdict
@@ -29,3 +30,18 @@ class MultiFacetedSearchForm(SearchForm):
                 sqs = sqs.narrow(" OR ".join(map(lambda x:u'%s:"%s"' % (field,sqs.query.clean(x)) ,value_list)))
 
         return sqs
+
+
+class UserProfileForm(forms.Form):
+    #http://stackoverflow.com/questions/12303478/how-to-customize-user-profile-when-using-django-allauth
+    #customized user profile form using allauth
+
+    first_name = forms.CharField(max_length=30, label='Voornaam')
+    last_name = forms.CharField(max_length=30, label='Achternaam')
+
+    def signup(self, request, user):
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.save()
+    
+

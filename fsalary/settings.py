@@ -20,13 +20,13 @@ if sys.getdefaultencoding() != defaultencoding:
     sys.setdefaultencoding(defaultencoding)
 # END handle the unicode problem
 
-# BEGIN 3rd party apps settings
 from allauth_settings import *
-# END 3rd party apps settings
 
 from private_settings import *
 import elasticsearch
 from requests_aws4auth import AWS4Auth
+
+
 
 awsauth_es = AWS4Auth(AWSAccessKeyId, AWSSecretKey, AWS_ES_FSALARY_REGION , 'es')
 
@@ -129,6 +129,9 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 COMMENTS_APP = 'my_comment_app'
+
+# allauth sign up form set up
+ACCOUNT_SIGNUP_FORM_CLASS = 'fsalary.reviews.forms.UserProfileForm'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
